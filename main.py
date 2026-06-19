@@ -5,8 +5,9 @@ import pandas as pd
 import os
 import uvicorn
 
-app = FastAPI(title="GSP Relay API")
+app = FastAPI(title="GSP1 Prototype API")
 
+# เปิด CORS ให้เพื่อนฝั่ง Frontend ดึงข้อมูลไปใช้ได้ไม่ติดบล็อก
 app.add_middleware(
     CORSMiddleware, 
     allow_origins=["*"], 
@@ -24,35 +25,14 @@ def get_db_connection():
 
 @app.get("/")
 def home():
-    return {"message": "API is running on Cloud!", "status": "success"}
+    return {"message": "GSP1 Prototype API is running!", "status": "success"}
 
 @app.get("/api/relays")
 def get_all_relays():
     conn = get_db_connection()
+    # ดึงข้อมูลตรงๆ ได้เลย ไม่ต้องสั่งสลับคอลัมน์กลางอากาศให้เปลืองแรงเครื่อง
     df = pd.read_sql_query("SELECT * FROM relays", conn)
     conn.close()
-    
-    # --- ส่วนที่เพิ่มเข้ามา: สั่งย้าย Plant ไปไว้คอลัมน์แรก ---
-    cols = ['Plant'] + [col for col in df.columns if col != 'Plant']
-    df = df[cols]
-    # -----------------------------------------------
-    
-    return {"status": "success", "total": len(df), "data": df.to_dict(orient="records")}
-
-@app.get("/api/relays/{plant}")
-def get_relays_by_plant(plant: str):
-    conn = get_db_connection()
-    query = f"SELECT * FROM relays WHERE Plant = '{plant.upper()}'"
-    df = pd.read_sql_query(query, conn)
-    conn.close()
-    
-    if df.empty:
-        return {"status": "error", "message": f"ไม่พบข้อมูลของ {plant}"}
-        
-    # --- ส่วนที่เพิ่มเข้ามา: สั่งย้าย Plant ไปไว้คอลัมน์แรก ---
-    cols = ['Plant'] + [col for col in df.columns if col != 'Plant']
-    df = df[cols]
-    # -----------------------------------------------
     
     return {"status": "success", "total": len(df), "data": df.to_dict(orient="records")}
 

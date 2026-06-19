@@ -1,8 +1,8 @@
 import libsql_client
 
 # TODO: เอา URL กับ Token ของมึงมาใส่ตรงนี้ (ใส่แค่ตอนรันสร้างตาราง รันเสร็จเราจะลบไฟล์นี้ทิ้ง)
-TURSO_URL = "libsql://gsp-relay-db-thirdthanisorn2004-ctrl.aws-ap-northeast-1.turso.io"
-TURSO_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODE4NTI0NzEsImlkIjoiMDE5ZWRlYWItNzMwMS03OGZmLWE2NjUtNjA5NWRlNjBmYzkyIiwicmlkIjoiNmM2MjZiODYtZTA2OS00YTkzLWFjZWQtNjZkMTUwYmQwZDU2In0.nWP5VYLr4a5ZbN220Rc5REVA3yf5dEpXYBdo1ls9JGFedcnHxJE0E84Z-nAgK2meRCvWN_DOKZS85XV6xqR9CQ"
+TURSO_URL = "https://gsp-relay-db-thirdthanisorn2004-ctrl.aws-ap-northeast-1.turso.io"
+TURSO_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODE4NTMxODAsImlkIjoiMDE5ZWRlYWItNzMwMS03OGZmLWE2NjUtNjA5NWRlNjBmYzkyIiwicmlkIjoiNmM2MjZiODYtZTA2OS00YTkzLWFjZWQtNjZkMTUwYmQwZDU2In0.VlqV69bz8E3SejlZjs2hpDj3xNDy1B2yqRHFD3fTU5SKssyb_o-C_XtJuOjpBkiFXwGI_xIe6ySOF5t_IrZsCQ"
 
 client = libsql_client.create_client_sync(url=TURSO_URL, auth_token=TURSO_TOKEN)
 

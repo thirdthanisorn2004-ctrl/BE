@@ -5,9 +5,9 @@ import pandas as pd
 import os
 import uvicorn
 
-app = FastAPI(title="GSP1 Prototype API with Edit Feature")
+app = FastAPI(title="GSP1 API - Full Version (Filter & Edit)")
 
-# เปิด CORS ให้เพื่อนฝั่ง Frontend ดึงและส่งข้อมูลมาหาเราได้
+# เปิด CORS ให้เพื่อนฝั่ง Frontend เข้าถึงได้ทุกฟังก์ชัน
 app.add_middleware(
     CORSMiddleware, 
     allow_origins=["*"], 
@@ -25,41 +25,57 @@ def get_db_connection():
 
 @app.get("/")
 def home():
-    return {"message": "GSP1 API with Edit Feature is running!", "status": "success"}
+    return {"message": "GSP1 API with Filter & Edit features is running!", "status": "success"}
 
 
-# 1. [GET] ประตูสำหรับส่งข้อมูลให้เพื่อนไปโชว์ (เพิ่มคอลัมน์ id)
+# ประตูที่ 1: [GET] ดูข้อมูลทั้งหมดแบบมี ID
 @app.get("/api/relays")
 def get_all_relays():
     conn = get_db_connection()
-    # ดึง rowid ของ SQLite มาตั้งชื่อเป็น id ให้เพื่อนเอาไปใช้อ้างอิงแถว
     df = pd.read_sql_query("SELECT rowid as id, * FROM relays", conn)
     conn.close()
     return {"status": "success", "total": len(df), "data": df.to_dict(orient="records")}
 
 
-# 2. [PUT] ประตูบานใหม่! สำหรับรับข้อมูลแก้ไขจากเพื่อนมาเซฟลง .db
+# ประตูที่ 2: [GET] ดูข้อมูลแยกตาม Plant (ลิงก์ /api/relays/GSP1 จะกลับมาเข้าได้ปกติแล้ว!)
+@app.get("/api/relays/{plant}")
+def get_relays_by_plant(plant: str):
+    conn = get_db_connection()
+    # ดึงข้อมูลแยกโรง และดึงเลข rowid มาทำเป็น id ให้ด้วย เผื่อเพื่อนดึงแยกโรงไปแล้วอยากกดแก้
+    query = "SELECT rowid as id, * FROM relays WHERE Plant = ?"
+    df = pd.read_sql_query(query, conn, params=(plant.upper(),))
+    conn.close()
+    
+    if df.empty:
+        return {"status": "error", "message": f"ไม่พบข้อมูลของ {plant}"}
+        
+    return {"status": "success", "total": len(df), "data": df.to_dict(orient="records")}
+
+
+# ประตูที่ 3: [PUT] สำหรับรับข้อมูลที่เพื่อนพิมพ์แก้ไขจากหน้าเว็บมาเซฟลง .db
 @app.put("/api/relays/{relay_id}")
 def update_relay(relay_id: int, updated_data: dict):
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    # เช็คก่อนว่ามีไอดีนี้จริงไหม
+    # เช็คก่อนว่ามีไอดีนี้ไหม
     cursor.execute("SELECT rowid FROM relays WHERE rowid = ?", (relay_id,))
     if not cursor.fetchone():
         conn.close()
         raise HTTPException(status_code=404, detail=f"ไม่พบข้อมูล Relay ไอดี {relay_id}")
     
-    # สร้างคำสั่ง SQL UPDATE แบบอัตโนมัติจากข้อมูลที่เพื่อนส่งมา
+    if not updated_data:
+        conn.close()
+        return {"status": "success", "message": "ไม่มีข้อมูลอัปเดต"}
+
+    # สร้างคำสั่ง SQL UPDATE อัตโนมัติตามข้อมูลที่ส่งมา
     fields = list(updated_data.keys())
     values = list(updated_data.values())
     
-    # สร้างข้อความเช่น "Breaker = ?, CT_Ratio = ?"
     set_clause = ", ".join([f"{field} = ?" for field in fields])
     query = f"UPDATE relays SET {set_clause} WHERE rowid = ?"
     
     try:
-        # รันคำสั่งอัปเดตข้อมูลลงฐานข้อมูล
         cursor.execute(query, values + [relay_id])
         conn.commit()
         conn.close()

@@ -4,12 +4,58 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "relay_data.db")
 
+# เชื่อมต่อฐานข้อมูล
 conn = sqlite3.connect(DB_PATH)
 cursor = conn.cursor()
 
-# สั่งลบทุกโรงที่ไม่ใช่ GSP1
-cursor.execute("DELETE FROM relays WHERE Plant != 'GSP1'")
-conn.commit()
+# 1. ลบตารางเก่าทิ้งเพื่อความสะอาด
+cursor.execute("DROP TABLE IF EXISTS relays")
 
-print("ลบโรงอื่นออกเรียบร้อย! ตอนนี้เหลือแค่ GSP1 แล้ว")
+# 2. สร้างตารางใหม่ โดยเอา Plant ขึ้นเป็นคอลัมน์แรกสุดใน .db เลย
+cursor.execute("""
+CREATE TABLE relays (
+    Plant TEXT,
+    Breaker TEXT,
+    CT_Ratio TEXT,
+    CT_Class TEXT,
+    CT_Burden_VA TEXT,
+    ZCT_Ratio TEXT,
+    ZCT_Class TEXT,
+    ZCT_Burden_VA TEXT,
+    Relay_ID TEXT,
+    Relay_Manufacturer TEXT,
+    Relay_Model TEXT,
+    Phase_Curve TEXT,
+    Phase_Pickup TEXT,
+    Phase_Prim_Amps TEXT,
+    Phase_Time_Dial TEXT,
+    Phase_Inst_Pickup TEXT,
+    Phase_Inst_Prim_Amps TEXT,
+    Phase_Inst_Delay_s TEXT,
+    Ground_Curve TEXT,
+    Ground_Pickup TEXT,
+    Ground_Prim_Amps TEXT,
+    Ground_Time_Dial TEXT,
+    Ground_Inst_Pickup TEXT,
+    Ground_Inst_Prim_Amps TEXT,
+    Ground_Inst_Delay_s TEXT,
+    OLR_Trip TEXT,
+    OLR_Prim_Amps TEXT,
+    OLR_Time_Constant TEXT,
+    Remark TEXT
+)
+""")
+
+# 3. เตรียมข้อมูล GSP1 ที่ข้างในเป็น "-" ทั้งหมด (ยกเว้น Plant)
+# มีทั้งหมด 29 คอลัมน์ (Plant เป็น 'GSP1' ส่วนอีก 28 คอลัมน์เป็น '-')
+blank_row = ('GSP1',) + ('-',) * 28
+
+# 4. วนลูปยัดข้อมูลเข้าไป 28 ตัว (28 แถว)
+for i in range(28):
+    cursor.execute("""
+    INSERT INTO relays VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    """, blank_row)
+
+conn.commit()
+print("🎉 จัดการฐานข้อมูลเรียบร้อย! ตอนนี้ใน .db มีแค่ GSP1 จำนวน 28 ตัว และข้อมูลข้างในเป็น '-' ทั้งหมดแล้ว")
 conn.close()

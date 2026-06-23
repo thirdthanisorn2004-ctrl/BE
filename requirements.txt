@@ -1,4 +1,6 @@
 fastapi
 uvicorn
-pydantic
 libsql-client
+pyjwt
+passlib[bcrypt]
+pydantic

@@ -108,7 +108,7 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 13px;
             color: #1c1b1b;
-            padding: 10px 12px 10px 40px;
+            padding: 10px 12px 10px 44px;
             transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
             outline: none;
         }
@@ -246,7 +246,7 @@
     </style>
 </head>
 
-<body class="min-h-screen w-full flex items-center justify-center grid-bg relative overflow-hidden">
+<body class="min-h-screen w-full flex items-center justify-center grid-bg relative overflow-auto">
 
     <!-- Ambient orbs -->
     <div class="glow-orb-1"></div>
@@ -321,7 +321,7 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <span class="material-symbols-outlined text-[18px] text-outline">key</span>
                             </div>
-                            <input class="input-field" id="password" placeholder="••••••••" type="password" required autocomplete="current-password">
+                            <input class="input-field" id="password" placeholder="••••••••" type="password" required autocomplete="current-password" style="padding-right:40px;">
                             <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-outline hover:text-on-surface-variant transition-colors">
                                 <span class="material-symbols-outlined text-[18px]" id="eye-icon">visibility_off</span>
                             </button>

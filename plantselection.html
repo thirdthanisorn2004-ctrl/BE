@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>PTT Asset Protection — Plant Selection</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --blue-900: #003d7c;
+            --blue-700: #0054a6;
+            --blue-500: #1a7de8;
+            --blue-50:  #e8f0fb;
+            --green:    #006d33;
+            --green-50: #e8f5e9;
+            --red:      #ba1a1a;
+            --red-50:   #fef2f2;
+            --amber:    #b45309;
+            --gray-50:  #f8faff;
+            --gray-100: #f0f4fa;
+            --gray-200: #dde3ef;
+            --gray-300: #c2c6d3;
+            --gray-400: #8e97a8;
+            --gray-600: #424751;
+            --gray-700: #374151;
+            --gray-900: #1c1b1b;
+            --white:    #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-100);
+            background-image: radial-gradient(circle, rgba(0,61,124,0.05) 1px, transparent 1px);
+            background-size: 24px 24px;
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            color: var(--gray-900);
+        }
+
+        /* ── Nav ── */
+        nav {
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 0 28px;
+            height: 56px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+            box-shadow: 0 1px 8px rgba(0,61,124,0.06);
+        }
+        .nav-left { display: flex; align-items: center; gap: 32px; }
+        .nav-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+        .nav-brand-icon {
+            width: 28px; height: 28px;
+            background: var(--blue-900);
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .nav-brand-icon svg { width: 14px; height: 14px; fill: #fff; }
+        .nav-brand-name {
+            font-size: 14px; font-weight: 700;
+            color: var(--blue-900); letter-spacing: -0.01em;
+        }
+        .nav-links { display: flex; gap: 2px; }
+        .nav-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; font-weight: 600;
+            color: var(--gray-400);
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            transition: all 0.15s;
+        }
+        .nav-link:hover { color: var(--blue-900); background: var(--blue-50); }
+        .nav-link.active { color: var(--blue-900); background: var(--blue-50); font-weight: 700; }
+
+        .nav-right { display: flex; align-items: center; gap: 8px; }
+        .nav-icon-btn {
+            width: 32px; height: 32px;
+            border: none; background: none; cursor: pointer;
+            border-radius: 6px; color: var(--gray-400);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s; position: relative;
+        }
+        .nav-icon-btn:hover { background: var(--gray-100); color: var(--gray-700); }
+        .nav-icon-btn svg { width: 16px; height: 16px; }
+        .notif-dot {
+            width: 6px; height: 6px;
+            background: var(--red);
+            border-radius: 50%;
+            position: absolute; top: 4px; right: 4px;
+            border: 1.5px solid #fff;
+        }
+
+        .nav-divider { width: 1px; height: 20px; background: var(--gray-200); margin: 0 4px; }
+
+        .avatar {
+            width: 30px; height: 30px;
+            background: var(--blue-900);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; font-weight: 700; color: #fff;
+        }
+        .user-meta { line-height: 1; }
+        .user-name { font-size: 12px; font-weight: 600; color: var(--gray-900); }
+        .user-role { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+
+        .logout-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; font-weight: 600;
+            color: var(--blue-900);
+            background: none;
+            border: 1.5px solid var(--blue-900);
+            border-radius: 6px;
+            padding: 5px 12px;
+            cursor: pointer;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            transition: all 0.15s;
+        }
+        .logout-btn:hover { background: var(--blue-900); color: #fff; }
+
+        /* ── Main ── */
+        main { flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 32px 28px; }
+
+        /* Page header */
+        .page-header {
+            display: flex; align-items: flex-end; justify-content: space-between;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray-200);
+            gap: 16px; flex-wrap: wrap;
+        }
+        .page-title-area {}
+        .page-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px; font-weight: 600;
+            color: var(--gray-400); letter-spacing: 0.12em;
+            text-transform: uppercase; margin-bottom: 4px;
+        }
+        .page-title {
+            font-size: 22px; font-weight: 700;
+            color: var(--gray-900); letter-spacing: -0.02em;
+        }
+        .page-header-right { display: flex; align-items: center; gap: 10px; }
+
+        .search-wrap { position: relative; }
+        .search-wrap svg {
+            position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+            color: var(--gray-400); pointer-events: none;
+            width: 14px; height: 14px;
+        }
+        .search-input {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px; color: var(--gray-900);
+            background: #fff;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 8px 12px 8px 32px;
+            outline: none;
+            width: 200px;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .search-input:focus { border-color: var(--blue-900); box-shadow: 0 0 0 3px rgba(0,61,124,0.1); }
+        .search-input::placeholder { color: var(--gray-400); }
+
+        .live-badge {
+            display: flex; align-items: center; gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px; font-weight: 600;
+            color: var(--green); letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .live-dot {
+            width: 7px; height: 7px;
+            background: var(--green); border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%,100% { opacity: 1; transform: scale(1); }
+            50%      { opacity: 0.5; transform: scale(1.4); }
+        }
+
+        /* Stats row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .stat-card {
+            background: #fff;
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 16px 18px;
+            box-shadow: 0 1px 4px rgba(0,61,124,0.04);
+        }
+        .stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px; font-weight: 600;
+            color: var(--gray-400); letter-spacing: 0.12em;
+            text-transform: uppercase; margin-bottom: 6px;
+        }
+        .stat-value {
+            font-size: 26px; font-weight: 700;
+            line-height: 1; letter-spacing: -0.02em;
+        }
+        .stat-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px; color: var(--gray-400); margin-top: 4px;
+        }
+        .stat-blue  { color: var(--blue-900); }
+        .stat-green { color: var(--green); }
+        .stat-gray  { color: var(--gray-700); }
+        .stat-red   { color: var(--red); }
+        .stat-card.alert-card { border-color: rgba(186,26,26,0.2); background: var(--red-50); }
+        .stat-card.alert-card .stat-sub { color: var(--red); }
+
+        /* Grid */
+        .plant-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+        }
+
+        /* Section */
+        .section-label {
+            display: flex; align-items: center; gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px; font-weight: 700;
+            color: var(--blue-900);
+            letter-spacing: 0.1em; text-transform: uppercase;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1.5px solid var(--blue-50);
+        }
+        .section-label svg { width: 14px; height: 14px; color: var(--blue-900); }
+
+        /* Plant card */
+        .plant-cards { display: flex; flex-direction: column; gap: 8px; }
+
+        .pcard {
+            background: #fff;
+            border: 1.5px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.18s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,61,124,0.04);
+        }
+        .pcard::before {
+            content: '';
+            position: absolute; left: 0; top: 0; bottom: 0;
+            width: 3px;
+            border-radius: 10px 0 0 10px;
+        }
+        .pcard:hover { transform: translateX(2px); box-shadow: 0 4px 16px rgba(0,61,124,0.1); border-color: var(--blue-900); }
+
+        .pcard.s-ready  { border-color: rgba(0,61,124,0.2); }
+        .pcard.s-ready::before  { background: var(--blue-900); }
+        .pcard.s-active { border-color: rgba(0,109,51,0.2); }
+        .pcard.s-active::before { background: var(--green); }
+        .pcard.s-standby { opacity: 0.7; }
+        .pcard.s-standby::before { background: var(--gray-300); }
+        .pcard.s-alert  { border-color: rgba(186,26,26,0.25); background: #fff9f9; }
+        .pcard.s-alert::before  { background: var(--red); }
+
+        .pcard-left { display: flex; align-items: center; gap: 12px; }
+        .pcard-icon {
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .pcard-icon svg { width: 16px; height: 16px; }
+        .icon-blue  { background: var(--blue-50);  color: var(--blue-900); }
+        .icon-green { background: var(--green-50); color: var(--green); }
+        .icon-gray  { background: var(--gray-100); color: var(--gray-400); }
+        .icon-red   { background: var(--red-50);   color: var(--red); }
+
+        .pcard-name {
+            font-size: 14px; font-weight: 700;
+            color: var(--gray-900); letter-spacing: -0.01em;
+        }
+        .pcard-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px; color: var(--gray-400);
+            margin-top: 2px;
+        }
+
+        .pcard-right { display: flex; align-items: center; gap: 8px; }
+        .pcard-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px; color: var(--gray-400);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px; font-weight: 700;
+            letter-spacing: 0.06em; text-transform: uppercase;
+            padding: 3px 7px; border-radius: 4px;
+        }
+        .badge svg { width: 10px; height: 10px; }
+        .badge-ready   { background: var(--blue-50);  color: var(--blue-900); border: 1px solid rgba(0,61,124,0.2); }
+        .badge-active  { background: var(--green-50); color: var(--green);    border: 1px solid rgba(0,109,51,0.2); }
+        .badge-standby { background: var(--gray-100); color: var(--gray-400); border: 1px solid var(--gray-200); }
+        .badge-alert   { background: var(--red-50);   color: var(--red);      border: 1px solid rgba(186,26,26,0.2); }
+
+        .arrow-icon { color: var(--gray-300); width: 14px; height: 14px; }
+        .arrow-icon svg { width: 14px; height: 14px; }
+
+        /* No results */
+        #no-results {
+            display: none; text-align: center;
+            padding: 60px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px; color: var(--gray-400);
+        }
+        #no-results svg { width: 36px; height: 36px; margin: 0 auto 12px; display: block; opacity: 0.3; }
+
+        /* Footer */
+        footer {
+            background: rgba(255,255,255,0.9);
+            border-top: 1px solid var(--gray-200);
+            padding: 10px 28px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        footer span, footer div {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px; color: var(--gray-400);
+            text-transform: uppercase; letter-spacing: 0.08em;
+        }
+        footer div { display: flex; gap: 20px; }
+
+        @media (max-width: 768px) {
+            .stats-row { grid-template-columns: 1fr 1fr; }
+            .plant-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr 1fr; }
+            main { padding: 20px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="nav-left">
+        <a class="nav-brand" href="#">
+            <div class="nav-brand-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+            </div>
+            <span class="nav-brand-name">PTT Asset Protection</span>
+        </a>
+        <div class="nav-links">
+            <a href="#" class="nav-link active">Plant Selection</a>
+            <a href="#" class="nav-link">SLD View</a>
+            <a href="#" class="nav-link">Coordination</a>
+            <a href="#" class="nav-link">Logs</a>
+        </div>
+    </div>
+    <div class="nav-right">
+        <button class="nav-icon-btn" title="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="notif-dot"></span>
+        </button>
+        <button class="nav-icon-btn" title="Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <div class="nav-divider"></div>
+        <div class="avatar" id="avatar-letter">A</div>
+        <div class="user-meta" style="display:none;" class="sm-only">
+            <div class="user-name" id="username-display">OPERATOR</div>
+            <div class="user-role" id="role-badge">USER</div>
+        </div>
+        <button class="logout-btn" id="logout-btn">Logout</button>
+    </div>
+</nav>
+
+<!-- MAIN -->
+<main>
+
+    <!-- Page header -->
+    <div class="page-header">
+        <div class="page-title-area">
+            <div class="page-eyebrow">PTT Industrial Systems · BKK-04</div>
+            <div class="page-title">Plant Selection</div>
+        </div>
+        <div class="page-header-right">
+            <div class="search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input class="search-input" type="text" placeholder="Search plant…" id="search-input">
+            </div>
+            <div class="live-badge">
+                <span class="live-dot"></span>
+                Live
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-label">Total Plants</div>
+            <div class="stat-value stat-blue">7</div>
+            <div class="stat-sub">2 networks</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Online</div>
+            <div class="stat-value stat-green">2</div>
+            <div class="stat-sub">GSP1 · GSP6</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Relays</div>
+            <div class="stat-value stat-gray">48</div>
+            <div class="stat-sub">All plants</div>
+        </div>
+        <div class="stat-card alert-card">
+            <div class="stat-label">Alerts</div>
+            <div class="stat-value stat-red">3</div>
+            <div class="stat-sub">Require review</div>
+        </div>
+    </div>
+
+    <!-- Plant grid -->
+    <div class="plant-grid" id="plant-grid">
+
+        <!-- 22 KV -->
+        <div>
+            <div class="section-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                22 KV Bus Network
+            </div>
+            <div class="plant-cards">
+
+                <div class="pcard s-ready" onclick="goTo('GSP1')" data-name="GSP1">
+                    <div class="pcard-left">
+                        <div class="pcard-icon icon-blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+                        </div>
+                        <div>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div class="pcard-name">GSP1</div>
+                                <span class="badge badge-ready">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10" fill="currentColor" opacity=".15"/><polyline points="8 12 11 15 16 9"/></svg>
+                                    Ready
+                                </span>
+                            </div>
+                            <div class="pcard-meta">PT-22K-001 · 12 Relays</div>
+                        </div>
+                    </div>
+                    <div class="pcard-right">
+                        <span class="pcard-time">2m ago</span>
+                        <div class="arrow-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+                    </div>
+                </div>
+
+                <div class="pcard s-standby" onclick="goTo('GSP2')" data-name="GSP2">
+                    <div class="pcard-left">
+                        <div class="pcard-icon icon-gray">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        </div>
+                        <div>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div class="pcard-name">GSP2</div>
+                                <span class="badge badge-standby">Standby</span>
+                            </div>
+                            <div class="pcard-meta">PT-22K-002 · 8 Relays</div>
+                        </div>
+                    </div>
+                    <span class="pcard-time">1h ago</span>
+                </div>
+
+                <div class="pcard s-alert" onclick="goTo('GSP3')" data-name="GSP3">
+                    <div class="pcard-left">
+                        <div class="pcard-icon icon-red">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        </div>
+                        <div>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div class="pcard-name">GSP3</div>
+                                <span class="badge badge-alert">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                    3 Alerts
+                                </span>
+                            </div>
+                            <div class="pcard-meta">MULTI-NODE · 14 Relays</div>
+                        </div>
+                    </div>
+                    <div class="arrow-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
+
+                <div class="pcard s-standby" onclick="goTo('GSP5')" data-name="GSP5">
+                    <div class="pcard-left">
+                        <div class="pcard-icon icon-gray">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        </div>
+                        <div>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div class="pcard-name">GSP5</div>
+                                <span class="badge badge-standby">Standby</span>
+                            </div>
+                            <div class="pcard-meta">PT-22K-005 · 6 Relays</div>
+                        </div>
+                    </div>
+                    <span class="pcard-time">3h ago</span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 115 KV -->
+        <div>
+            <div class="section-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 12v-6m-6-3H2m20 0h-4M4.93 4.93l4.24 4.24m5.66 5.66l4.24 4.24M4.93 19.07l4.24-4.24m5.66-5.66l4.24-4.24"/></svg>
+                115 KV Bus Network
+            </div>
+            <div class="plant-cards">
+
+                <div class="pcard s-standby" style="cursor:default;" data-name="ESP">
+                    <div class="pcard-left">
+                        <div class="pcard-icon icon-gray">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r=".5" fill="currentColor"/></svg>
+                        </div>
+                        <div>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div class="pcard-name">ESP</div>
+                                <span class="badge badge-standby">Standby</span>
+                            </div>
+                            <div class="pcard-meta">PT-115K-ESP · 4 Relays</div>
+                        </div>
+                    </div>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gray-300);text-transform:uppercase;letter-spacing:.06em;">No Access</span>
+                </div>
+
+                <div class="pcard s-active" onclick="goTo('GSP6')" data-name="GSP6">
+                    <div class="pcard-left">
+                        <div class="pcard-icon icon-green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+                        </div>
+                        <div>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div class="pcard-name">GSP6</div>
+                                <span class="badge badge-active">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10" fill="currentColor" opacity=".15"/><polyline points="8 12 11 15 16 9"/></svg>
+                                    Active
+                                </span>
+                            </div>
+                            <div class="pcard-meta">PT-115K-006 · 10 Relays</div>
+                        </div>
+                    </div>
+                    <div class="pcard-right">
+                        <span class="pcard-time">5m ago</span>
+                        <div class="arrow-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+                    </div>
+                </div>
+
+                <div class="pcard s-standby" style="cursor:default;" data-name="CWWTP">
+                    <div class="pcard-left">
+                        <div class="pcard-icon icon-gray">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                        </div>
+                        <div>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div class="pcard-name">CWWTP</div>
+                                <span class="badge badge-standby">Standby</span>
+                            </div>
+                            <div class="pcard-meta">Water Treatment · 4 Relays</div>
+                        </div>
+                    </div>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gray-300);text-transform:uppercase;letter-spacing:.06em;">No Access</span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- No results -->
+    <div id="no-results">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        No plant matched your search
+    </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+    <span>© 2026 PTT Industrial Systems · Core-DB v4.8.2</span>
+    <div>
+        <span>System: Optimal</span>
+        <span>Latency: 12ms</span>
+        <span>Node: BKK-04</span>
+    </div>
+</footer>
+
+<script>
+    // Auth guard
+    if (!localStorage.getItem("token")) window.location.href = "index.html";
+
+    // User info
+    const role = localStorage.getItem("user_role") || "user";
+    const uid  = localStorage.getItem("operator_id") || "OPR";
+    document.getElementById("role-badge").textContent = role.toUpperCase();
+    document.getElementById("username-display").textContent = uid.toUpperCase();
+    document.getElementById("avatar-letter").textContent = uid.charAt(0).toUpperCase();
+
+    function goTo(plant) {
+        localStorage.setItem("selected_plant", plant);
+        window.location.href = "dashboard.html";
+    }
+
+    // Search
+    document.getElementById("search-input").addEventListener("input", function () {
+        const q = this.value.toLowerCase();
+        const cards = document.querySelectorAll(".pcard[data-name]");
+        let n = 0;
+        cards.forEach(c => {
+            const show = c.dataset.name.toLowerCase().includes(q);
+            c.style.display = show ? "" : "none";
+            if (show) n++;
+        });
+        document.getElementById("no-results").style.display = n === 0 ? "block" : "none";
+    });
+
+    // Logout
+    document.getElementById("logout-btn").addEventListener("click", () => {
+        localStorage.clear();
+        window.location.href = "index.html";
+    });
+</script>
+</body>
+</html>

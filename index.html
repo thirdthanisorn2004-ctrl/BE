@@ -1,558 +1,881 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>PTT Asset Protection — Sign In</title>
+    <title>PTT Asset Protection Database - Sign In</title>
 
-    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+
+    <script src="80d52182-7ae6-4246-a485-c737d4cf1121"></script>
+    <script src="f3261e09-0363-4822-897e-5e00113fbbfb" defer=""></script>
+
+    <style>/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("6be13aaf-a90e-49eb-8e75-a689e11401ee") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("04e81f06-aa42-4dd6-aa4c-c43ba39aa5dd") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("68c04630-45b3-44e7-babe-338ee8e29f0b") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("749b0008-ab1e-490c-8d1d-a82eab0bd8be") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("3b1af087-cf37-4862-96e9-ff463e0a155b") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("9f9b7987-bcd9-459d-accc-7dec5381f9c6") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("6be13aaf-a90e-49eb-8e75-a689e11401ee") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("04e81f06-aa42-4dd6-aa4c-c43ba39aa5dd") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("68c04630-45b3-44e7-babe-338ee8e29f0b") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("749b0008-ab1e-490c-8d1d-a82eab0bd8be") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("3b1af087-cf37-4862-96e9-ff463e0a155b") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("9f9b7987-bcd9-459d-accc-7dec5381f9c6") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("6be13aaf-a90e-49eb-8e75-a689e11401ee") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("04e81f06-aa42-4dd6-aa4c-c43ba39aa5dd") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("68c04630-45b3-44e7-babe-338ee8e29f0b") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("749b0008-ab1e-490c-8d1d-a82eab0bd8be") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("3b1af087-cf37-4862-96e9-ff463e0a155b") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("9f9b7987-bcd9-459d-accc-7dec5381f9c6") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("73a3abab-c9ee-48bc-912e-b73bbee90ff3") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("08f1a279-b9e5-4382-8bb7-a15ceddb23e7") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("edd1cfe7-9ded-410a-bfeb-7173b3721925") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("69d30eba-d77c-4992-904c-b1a011850196") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("73a3abab-c9ee-48bc-912e-b73bbee90ff3") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("08f1a279-b9e5-4382-8bb7-a15ceddb23e7") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("edd1cfe7-9ded-410a-bfeb-7173b3721925") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("69d30eba-d77c-4992-904c-b1a011850196") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("73a3abab-c9ee-48bc-912e-b73bbee90ff3") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("08f1a279-b9e5-4382-8bb7-a15ceddb23e7") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("edd1cfe7-9ded-410a-bfeb-7173b3721925") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("69d30eba-d77c-4992-904c-b1a011850196") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("73a3abab-c9ee-48bc-912e-b73bbee90ff3") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("08f1a279-b9e5-4382-8bb7-a15ceddb23e7") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("edd1cfe7-9ded-410a-bfeb-7173b3721925") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("69d30eba-d77c-4992-904c-b1a011850196") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("73a3abab-c9ee-48bc-912e-b73bbee90ff3") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("08f1a279-b9e5-4382-8bb7-a15ceddb23e7") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("edd1cfe7-9ded-410a-bfeb-7173b3721925") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("69d30eba-d77c-4992-904c-b1a011850196") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("6a1d123d-a420-44e5-8626-2f15d82ef626") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("a62b3435-29f6-4154-851b-74cf599438a5") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fefeb850-3907-4591-9492-089eddc71c20") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("6a1d123d-a420-44e5-8626-2f15d82ef626") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("a62b3435-29f6-4154-851b-74cf599438a5") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fefeb850-3907-4591-9492-089eddc71c20") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("6a1d123d-a420-44e5-8626-2f15d82ef626") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("a62b3435-29f6-4154-851b-74cf599438a5") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fefeb850-3907-4591-9492-089eddc71c20") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("6a1d123d-a420-44e5-8626-2f15d82ef626") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("a62b3435-29f6-4154-851b-74cf599438a5") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("fefeb850-3907-4591-9492-089eddc71c20") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+    <style>/* fallback */
+@font-face {
+  font-family: 'Material Symbols Outlined';
+  font-style: normal;
+  font-weight: 100 700;
+  font-display: swap;
+  src: url("49fe7261-4023-4b12-98e7-fc968e01db27") format('woff2');
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+</style>
 
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
         :root {
-            --blue-900: #003d7c;
-            --blue-700: #0054a6;
-            --blue-500: #1a7de8;
-            --blue-50:  #e8f0fb;
-            --green:    #006d33;
-            --red:      #ba1a1a;
-            --gray-50:  #f8faff;
-            --gray-100: #f0f4fa;
-            --gray-200: #dde3ef;
-            --gray-400: #8e97a8;
-            --gray-600: #424751;
-            --gray-900: #1c1b1b;
-            --white:    #ffffff;
+            --blue:      #003d7c;
+            --blue-600:  #0b56a4;
+            --blue-50:   #eef4fb;
+            --ink:       #11202f;
+            --muted:     #586273;
+            --faint:     #98a1ae;
+            --line:      #e7ebf1;
+            --line-soft: #eff2f7;
+            --field:     #f7f9fc;
+            --green:     #0f8a4d;
         }
 
+        * { box-sizing: border-box; }
+        html, body { height: 100%; }
         body {
-            font-family: 'Inter', sans-serif;
-            background: var(--gray-100);
-            min-height: 100vh;
-            display: flex;
-            overflow: auto;
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--ink);
+            background: #ffffff;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
         }
+        h1, h2, h3, p { margin: 0; }
+        button { font-family: inherit; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .display { font-family: 'Space Grotesk', sans-serif; }
 
-        /* ── Left panel ── */
-        .left-panel {
-            width: 420px;
-            flex-shrink: 0;
-            background: var(--blue-900);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 48px 40px;
+        .shell { display: flex; min-height: 100vh; }
+
+        /* ============== LEFT · visual panel ============== */
+        .visual {
             position: relative;
+            flex: 0 0 52%;
+            max-width: 880px;
             overflow: hidden;
+            background: linear-gradient(160deg, #0b3a6e, #06203c);
         }
-        .left-panel::before {
-            content: '';
-            position: absolute;
-            width: 500px; height: 500px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
-            top: -120px; right: -120px;
-            pointer-events: none;
+        .visual image-slot { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+        /* photo treatment — blue duotone + bottom darken for legibility */
+        .v-tint {
+            position: absolute; inset: 0; pointer-events: none;
+            background: linear-gradient(150deg, rgba(0,61,124,0.42) 0%, rgba(6,32,60,0.18) 45%, rgba(6,32,60,0.82) 100%);
+            mix-blend-mode: multiply;
         }
-        .left-panel::after {
-            content: '';
-            position: absolute;
-            width: 300px; height: 300px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0,109,51,0.25) 0%, transparent 70%);
-            bottom: -60px; left: -60px;
-            pointer-events: none;
+        .v-shade {
+            position: absolute; inset: 0; pointer-events: none;
+            background: linear-gradient(180deg, rgba(6,24,46,0.34) 0%, transparent 30%, rgba(6,24,46,0.55) 100%);
+        }
+        .v-grid {
+            position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+            background-size: 46px 46px;
+            background-image:
+                linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+            -webkit-mask-image: linear-gradient(to bottom, #000, transparent 55%);
+                    mask-image: linear-gradient(to bottom, #000, transparent 55%);
         }
 
-        .brand-mark {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-            z-index: 1;
+        .v-content {
+            position: relative; z-index: 2;
+            height: 100%;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 40px 46px;
+            color: #fff;
+            pointer-events: none;
         }
-        .brand-icon {
-            width: 36px; height: 36px;
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 8px;
+        .v-brand { display: flex; align-items: center; gap: 11px; }
+        .v-brand .vm {
+            width: 38px; height: 38px; border-radius: 10px;
+            background: rgba(255,255,255,0.13);
+            border: 1px solid rgba(255,255,255,0.24);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
             display: flex; align-items: center; justify-content: center;
         }
-        .brand-icon svg { width: 18px; height: 18px; fill: #fff; }
-        .brand-name {
-            font-size: 13px;
-            font-weight: 600;
-            color: rgba(255,255,255,0.9);
-            letter-spacing: 0.02em;
-        }
+        .v-brand .vt { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 15.5px; letter-spacing: -0.01em; }
 
-        .left-content {
+        .v-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; font-weight: 500; letter-spacing: 0.18em;
+            color: rgba(255,255,255,0.66);
+        }
+        .v-head {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700; font-size: 33px; line-height: 1.16; letter-spacing: -0.015em;
+            margin-top: 14px; max-width: 15ch; text-wrap: balance;
+        }
+        .v-feats { margin-top: 26px; display: flex; flex-direction: column; gap: 13px; }
+        .v-feat { display: flex; align-items: center; gap: 12px; }
+        .v-feat .fi {
+            width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0;
+            background: rgba(255,255,255,0.14);
+            border: 1px solid rgba(255,255,255,0.22);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .v-feat .ft { font-size: 13.5px; font-weight: 500; color: rgba(255,255,255,0.92); }
+
+        /* ============== RIGHT · form panel ============== */
+        .form-pane {
+            flex: 1 1 auto;
+            position: relative;
+            display: flex; align-items: center; justify-content: center;
+            padding: 40px 28px;
+            overflow-y: auto;
+        }
+        .form-pane .fp-grid {
+            position: absolute; inset: 0; pointer-events: none; z-index: 0;
+            background-size: 44px 44px;
+            background-image:
+                linear-gradient(to right, rgba(0,61,124,0.035) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0,61,124,0.035) 1px, transparent 1px);
+            -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 28%, #000 30%, transparent 75%);
+                    mask-image: radial-gradient(ellipse 70% 60% at 50% 28%, #000 30%, transparent 75%);
+        }
+        .form-inner {
             position: relative; z-index: 1;
+            width: 100%; max-width: 384px;
+            opacity: 1;
+            animation: rise 0.6s cubic-bezier(0.22,1,0.36,1) both;
         }
-        .left-content h1 {
-            font-size: 32px;
-            font-weight: 700;
-            color: #fff;
-            line-height: 1.2;
-            letter-spacing: -0.02em;
-            margin-bottom: 16px;
-        }
-        .left-content p {
-            font-size: 14px;
-            color: rgba(255,255,255,0.55);
-            line-height: 1.6;
-            font-weight: 400;
-        }
+        @keyframes rise { from { transform: translateY(12px); } to { transform: none; } }
 
-        .feature-list {
-            margin-top: 36px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        /* compact brand (visible mainly on small screens) */
+        .fp-brand { display: flex; align-items: center; gap: 9px; margin-bottom: 30px; }
+        .fp-brand .bm {
+            width: 34px; height: 34px; border-radius: 9px;
+            background: var(--blue-50); display: flex; align-items: center; justify-content: center;
         }
-        .feature-item {
-            display: flex; align-items: flex-start; gap: 12px;
-        }
-        .feature-dot {
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.4);
-            margin-top: 6px;
-            flex-shrink: 0;
-        }
-        .feature-text {
-            font-size: 13px;
-            color: rgba(255,255,255,0.5);
-            line-height: 1.4;
-        }
+        .fp-brand .bt { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; color: var(--ink); letter-spacing: -0.01em; }
 
-        .left-footer {
-            position: relative; z-index: 1;
-        }
-        .left-footer p {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            color: rgba(255,255,255,0.25);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
+        .h-title { font-family: 'Space Grotesk', sans-serif; font-size: 27px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+        .h-sub { font-size: 14px; color: var(--muted); margin-top: 7px; }
 
-        /* ── Right panel ── */
-        .right-panel {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 24px;
-            background: var(--gray-100);
-            /* subtle dot pattern */
-            background-image: radial-gradient(circle, rgba(0,61,124,0.06) 1px, transparent 1px);
-            background-size: 24px 24px;
+        /* segmented tabs */
+        .seg { display: flex; gap: 4px; background: #f1f4f9; border: 1px solid var(--line-soft); border-radius: 11px; padding: 4px; margin: 26px 0 22px; }
+        .seg-btn {
+            flex: 1; padding: 9px 0; font-size: 13px; font-weight: 600;
+            border-radius: 8px; border: none; cursor: pointer; background: transparent; color: var(--muted);
+            transition: color .2s, background .2s, box-shadow .2s;
         }
+        .seg-btn:hover { color: var(--ink); }
+        .seg-btn.active { background: #fff; color: var(--blue); box-shadow: 0 1px 2px rgba(16,32,52,.06), 0 2px 8px -2px rgba(0,61,124,.18); }
 
-        .form-card {
-            width: 100%;
-            max-width: 380px;
-            background: var(--white);
-            border-radius: 16px;
-            border: 1px solid var(--gray-200);
-            box-shadow: 0 4px 24px rgba(0,61,124,0.08), 0 1px 4px rgba(0,61,124,0.04);
-            overflow: hidden;
-        }
+        /* status */
+        .status-banner { display: none; padding: 11px 14px; border-radius: 11px; font-size: 12.5px; font-weight: 500; margin-bottom: 18px; align-items: center; gap: 9px; }
+        .status-banner.visible { display: flex; }
+        .status-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+        .status-error   { background: #fef2f2; border: 1px solid #fecaca; color: #c2362b; }
+        .status-info    { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+        .status-warn    { background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; }
 
-        .card-top-bar {
-            height: 3px;
-            background: linear-gradient(90deg, var(--blue-900) 0%, var(--blue-500) 60%, var(--green) 100%);
-        }
-
-        .form-body { padding: 32px; }
-
-        .form-eyebrow {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--gray-400);
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-        .form-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--gray-900);
-            letter-spacing: -0.01em;
-            margin-bottom: 24px;
-        }
-
-        /* Tabs */
-        .tab-row {
-            display: flex;
-            background: var(--gray-100);
-            border-radius: 8px;
-            padding: 3px;
-            margin-bottom: 24px;
-            gap: 2px;
-        }
-        .tab-btn {
-            flex: 1;
-            padding: 7px 0;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.18s;
-            color: var(--gray-400);
-            background: transparent;
-        }
-        .tab-btn.active {
-            background: var(--blue-900);
-            color: #fff;
-            box-shadow: 0 1px 6px rgba(0,61,124,0.25);
-        }
-
-        /* Status */
-        .status-box {
-            display: none;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            font-weight: 600;
-            margin-bottom: 18px;
-        }
-        .status-box.show { display: flex; }
-        .status-box svg { width: 14px; height: 14px; flex-shrink: 0; }
-        .status-info    { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-        .status-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
-        .status-error   { background: #fef2f2; color: var(--red); border: 1px solid #fecaca; }
-        .status-warn    { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
-
-        /* Field */
-        .field { margin-bottom: 16px; }
-        .field-label {
-            display: block;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--gray-600);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
+        /* fields */
+        .field { margin-bottom: 17px; }
+        .field-label { display: block; font-size: 12.5px; font-weight: 600; color: var(--muted); margin-bottom: 7px; }
         .field-wrap {
-            display: flex;
-            align-items: center;
-            gap: 0;
-            background: var(--gray-50);
-            border: 1.5px solid var(--gray-200);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: border-color 0.15s, box-shadow 0.15s;
-        }
-        .field-wrap:focus-within {
-            border-color: var(--blue-900);
-            box-shadow: 0 0 0 3px rgba(0,61,124,0.1);
-            background: #fff;
-        }
-        .field-icon {
-            width: 38px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-            color: var(--gray-400);
-        }
-        .field-icon svg { width: 15px; height: 15px; }
-        .field-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            outline: none;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            color: var(--gray-900);
-            padding: 10px 10px 10px 0;
-        }
-        .field-input::placeholder { color: var(--gray-400); }
-        .field-btn {
-            width: 38px;
-            display: flex; align-items: center; justify-content: center;
-            background: none; border: none; cursor: pointer;
-            color: var(--gray-400);
-            transition: color 0.15s;
-        }
-        .field-btn:hover { color: var(--gray-900); }
-        .field-btn svg { width: 15px; height: 15px; }
-
-        /* Divider */
-        .rule {
             display: flex; align-items: center; gap: 10px;
-            margin: 18px 0 16px;
+            background: var(--field); border: 1.5px solid var(--line); border-radius: 11px;
+            padding: 0 13px; height: 47px;
+            transition: border-color .18s, box-shadow .18s, background .18s;
         }
-        .rule::before, .rule::after {
-            content: ''; flex: 1;
-            height: 1px; background: var(--gray-200);
+        .field-wrap:focus-within { background: #fff; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0,61,124,.10); }
+        .field-input { flex: 1; border: none; background: transparent; outline: none; font-family: inherit; font-size: 14.5px; color: var(--ink); height: 100%; }
+        .field-input::placeholder { color: var(--faint); font-weight: 400; }
+        .select-field {
+            width: 100%; background: var(--field); border: 1.5px solid var(--line); border-radius: 11px;
+            font-family: inherit; font-size: 14.5px; color: var(--ink); height: 47px; padding: 0 40px 0 13px;
+            appearance: none; -webkit-appearance: none; cursor: pointer; outline: none;
+            transition: border-color .18s, box-shadow .18s;
         }
-        .rule span {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9px; font-weight: 600;
-            color: var(--gray-400);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
+        .select-field:focus { background: #fff; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0,61,124,.10); }
+        .sel-wrap { position: relative; }
+        .sel-caret { position: absolute; top: 50%; right: 13px; transform: translateY(-50%); pointer-events: none; color: var(--faint); }
+        .icon-btn { background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; color: var(--faint); transition: color .18s; }
+        .icon-btn:hover { color: var(--muted); }
 
-        /* Select */
-        .select-wrap {
-            position: relative;
-        }
-        .field-select {
-            width: 100%;
-            background: var(--gray-50);
-            border: 1.5px solid var(--gray-200);
-            border-radius: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            color: var(--gray-900);
-            padding: 10px 36px 10px 12px;
-            appearance: none;
-            outline: none;
-            cursor: pointer;
-            transition: border-color 0.15s, box-shadow 0.15s;
-        }
-        .field-select:focus {
-            border-color: var(--blue-900);
-            box-shadow: 0 0 0 3px rgba(0,61,124,0.1);
-        }
-        .select-arrow {
-            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-            pointer-events: none; color: var(--gray-400);
-        }
-        .select-arrow svg { width: 14px; height: 14px; }
-
-        /* Submit */
         .submit-btn {
-            width: 100%;
-            margin-top: 20px;
-            padding: 12px;
-            background: var(--blue-900);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            cursor: pointer;
-            transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
-            box-shadow: 0 2px 10px rgba(0,61,124,0.3);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; height: 49px; margin-top: 6px;
+            background: linear-gradient(180deg, var(--blue-600), var(--blue));
+            color: #fff; border: none; border-radius: 11px;
+            font-size: 15px; font-weight: 600; cursor: pointer;
+            box-shadow: 0 8px 18px -7px rgba(0,61,124,.55), inset 0 1px 0 rgba(255,255,255,.16);
+            transition: transform .14s, box-shadow .14s, opacity .14s;
         }
-        .submit-btn:hover { background: var(--blue-700); box-shadow: 0 4px 16px rgba(0,61,124,0.4); }
-        .submit-btn:active { transform: scale(0.99); }
-        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .submit-btn svg { width: 16px; height: 16px; }
+        .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 12px 24px -8px rgba(0,61,124,.6), inset 0 1px 0 rgba(255,255,255,.16); }
+        .submit-btn:active { transform: translateY(0); }
+        .submit-btn:disabled { opacity: .65; cursor: default; transform: none; }
 
-        /* Footer link */
-        .form-footer {
-            padding: 16px 32px;
-            border-top: 1px solid var(--gray-200);
-            text-align: center;
-            background: var(--gray-50);
-        }
-        .form-footer p {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--gray-400);
-        }
-        .form-footer button {
-            background: none; border: none;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--blue-900);
-            cursor: pointer;
-            margin-left: 4px;
-            text-decoration: underline;
-            text-underline-offset: 2px;
-        }
-        .form-footer button:hover { color: var(--blue-700); }
+        .foot-link { text-align: center; margin-top: 22px; font-size: 13px; color: var(--muted); }
+        .foot-link button { background: none; border: none; cursor: pointer; color: var(--blue); font-weight: 600; font-size: 13px; font-family: inherit; margin-left: 3px; }
+        .foot-link button:hover { text-decoration: underline; }
 
-        /* Responsive */
-        @media (max-width: 720px) {
-            .left-panel { display: none; }
-            .right-panel { padding: 24px 16px; background-image: none; }
+        .foot-meta {
+            margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--line-soft);
+            display: flex; align-items: center; gap: 14px;
+            font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 500; color: var(--faint); letter-spacing: .04em;
+        }
+        .foot-meta .sep { color: var(--line); }
+        .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; background: var(--green); }
+
+        /* responsive */
+        @media (max-width: 1000px) {
+            .visual { display: none; }
+        }
+        @media (min-width: 1001px) {
+            .fp-brand { display: none; }
         }
     </style>
 </head>
 
 <body>
-<!-- Left decorative panel -->
-<div class="left-panel">
-    <div class="brand-mark">
-        <div class="brand-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+<div class="shell">
+
+    <!-- ============== LEFT · visual ============== -->
+    <aside class="visual">
+        <image-slot id="gsp-photo" shape="rect" fit="cover" src="f6ea5474-9a3b-4bd9-9f2c-9df53ce2d1f6" placeholder="Drop GSP Rayong photo here" data-comment-anchor="8077c5673e-image-slot"></image-slot>
+        <div class="v-tint"></div>
+        <div class="v-shade"></div>
+        <div class="v-grid"></div>
+
+        <div class="v-content">
+            <div class="v-brand">
+                <div class="vm"><span class="material-symbols-outlined" style="color:#fff;font-size:21px;font-variation-settings:'FILL' 1;">security</span></div>
+                <span class="vt">PTT Asset Protection</span>
+            </div>
+
+            <div>
+                <span class="v-eyebrow">RAYONG · GSP COMPLEX</span>
+                <h2 class="v-head">Protecting critical energy infrastructure</h2>
+                <div class="v-feats">
+                    <div class="v-feat">
+                        <span class="fi"><span class="material-symbols-outlined" style="color:#fff;font-size:15px;">bolt</span></span>
+                        <span class="ft">Relay protection monitoring</span>
+                    </div>
+                    <div class="v-feat">
+                        <span class="fi"><span class="material-symbols-outlined" style="color:#fff;font-size:15px;">lan</span></span>
+                        <span class="ft">22 kV &amp; 115 kV multi-plant coverage</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <span class="brand-name">PTT Asset Protection</span>
-    </div>
+    </aside>
 
-    <div class="left-content">
-        <h1>Relay Protection<br>Database</h1>
-        <p>Centralized platform for managing relay protection settings, coordination curves, and equipment data across all PTT plants.</p>
+    <!-- ============== RIGHT · form ============== -->
+    <main class="form-pane">
+        <div class="fp-grid"></div>
 
-        <div class="feature-list">
-            <div class="feature-item">
-                <div class="feature-dot"></div>
-                <div class="feature-text">View and edit relay data on interactive SLD diagrams</div>
-            </div>
-            <div class="feature-item">
-                <div class="feature-dot"></div>
-                <div class="feature-text">Verify coordination with Time-Current Curves</div>
-            </div>
-            <div class="feature-item">
-                <div class="feature-dot"></div>
-                <div class="feature-text">Export equipment summaries to CSV</div>
-            </div>
-            <div class="feature-item">
-                <div class="feature-dot"></div>
-                <div class="feature-text">Role-based access — Admin edit, User view</div>
-            </div>
-        </div>
-    </div>
+        <div class="form-inner">
 
-    <div class="left-footer">
-        <p>AES-256 · TLS 1.3 · NODE BKK-01</p>
-    </div>
-</div>
+            <div class="fp-brand">
+                <div class="bm"><span class="material-symbols-outlined" style="color:var(--blue);font-size:19px;font-variation-settings:'FILL' 1;">security</span></div>
+                <span class="bt">PTT Asset Protection</span>
+            </div>
 
-<!-- Right form panel -->
-<div class="right-panel">
-    <div class="form-card">
-        <div class="card-top-bar"></div>
-        <div class="form-body">
-            <div class="form-eyebrow">Secure Access Terminal</div>
-            <div class="form-title" id="form-title">Welcome back</div>
+            <h1 class="h-title" id="head-title">Welcome back</h1>
+            <p class="h-sub" id="head-sub">Sign in to access the asset protection database</p>
 
             <!-- Tabs -->
-            <div class="tab-row">
-                <button class="tab-btn active" id="tab-signin" onclick="switchTab('signin')">Sign In</button>
-                <button class="tab-btn" id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+            <div class="seg">
+                <button class="seg-btn active" id="tab-signin" onclick="switchTab('signin')">Sign In</button>
+                <button class="seg-btn" id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
             </div>
 
             <!-- Status -->
-            <div class="status-box" id="status-box">
-                <svg id="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></svg>
+            <div class="status-banner" id="status-display">
+                <span class="material-symbols-outlined" style="font-size:17px;" id="status-icon">info</span>
                 <span id="status-text"></span>
             </div>
 
             <form id="auth-form" onsubmit="handleSubmit(event)">
-                <!-- Username -->
+
                 <div class="field">
                     <label class="field-label" for="username">Username</label>
                     <div class="field-wrap">
-                        <div class="field-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21v-1a9 9 0 0 1 18 0v1"/></svg>
-                        </div>
-                        <input class="field-input" id="username" type="text" placeholder="Enter username" required autocomplete="username">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#98a1ae" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="8" r="5"></circle><path d="M3 21v-1a9 9 0 0 1 18 0v1"></path></svg>
+                        <input class="field-input" id="username" placeholder="Enter your username" type="text" required="" autocomplete="username">
                     </div>
                 </div>
 
-                <!-- Password -->
                 <div class="field">
                     <label class="field-label" for="password">Password</label>
                     <div class="field-wrap">
-                        <div class="field-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                        </div>
-                        <input class="field-input" id="password" type="password" placeholder="••••••••" required autocomplete="current-password">
-                        <button type="button" class="field-btn" onclick="togglePwd()">
-                            <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M17.94 17.94A10 10 0 0 1 12 20c-7 0-11-8-11-8a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9 9 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>
-                            </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#98a1ae" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        <input class="field-input" id="password" placeholder="Enter your password" type="password" required="" autocomplete="current-password">
+                        <button type="button" onclick="togglePassword()" class="icon-btn">
+                            <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                         </button>
                     </div>
                 </div>
 
-                <!-- Role -->
-                <div class="rule"><span>Access Role</span></div>
-                <div class="field">
-                    <label class="field-label">Role</label>
-                    <div class="select-wrap">
-                        <select class="field-select" id="role-select">
+                <div class="field" id="role-section">
+                    <label class="field-label">Access role</label>
+                    <div class="sel-wrap">
+                        <select id="role-select" class="select-field">
                             <option value="user">Standard User</option>
                             <option value="admin">Administrator</option>
                         </select>
-                        <div class="select-arrow">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
-                        </div>
+                        <span class="sel-caret material-symbols-outlined" style="font-size:20px;">expand_more</span>
                     </div>
                 </div>
 
                 <button class="submit-btn" type="submit" id="submit-btn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
                     <span id="submit-label">Sign In</span>
                 </button>
-            </form>
-        </div>
 
-        <div class="form-footer">
-            <p>
+            </form>
+
+            <p class="foot-link">
                 <span id="footer-hint">Don't have an account?</span>
-                <button id="footer-link" onclick="switchTab(currentTab==='signin'?'signup':'signin')">Sign Up</button>
+                <button onclick="switchTab(currentTab === 'signin' ? 'signup' : 'signin')" id="footer-link">Sign Up</button>
             </p>
+
         </div>
-    </div>
+    </main>
+
 </div>
+
+<script>
+    // Standalone-bundle hook: swap the plant photo to its inlined blob URL when present.
+    (function () {
+        function applyRes() {
+            if (window.__resources && window.__resources.gspPhoto) {
+                var el = document.getElementById('gsp-photo');
+                if (el) el.setAttribute('src', window.__resources.gspPhoto);
+                return true;
+            }
+            return false;
+        }
+        if (!applyRes()) {
+            document.addEventListener('DOMContentLoaded', applyRes);
+            var n = 0, t = setInterval(function () { if (applyRes() || ++n > 50) clearInterval(t); }, 100);
+        }
+    })();
+</script>
+
+
 
 <script>
     const API_BASE_URL = "https://gsp-api.onrender.com/api";
     let currentTab = "signin";
 
-    const STATUS_ICONS = {
-        info:    '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
-        success: '<polyline points="20 6 9 17 4 12"/>',
-        error:   '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>',
-        warn:    '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
-    };
-
-    function showStatus(msg, type) {
-        const box = document.getElementById("status-box");
-        box.className = "status-box show status-" + type;
-        document.getElementById("status-icon").innerHTML = STATUS_ICONS[type] || STATUS_ICONS.info;
-        document.getElementById("status-text").textContent = msg;
-    }
-    function hideStatus() {
-        document.getElementById("status-box").className = "status-box";
-    }
-
     function switchTab(tab) {
         currentTab = tab;
-        const si = tab === "signin";
-        document.getElementById("tab-signin").className = "tab-btn" + (si ? " active" : "");
-        document.getElementById("tab-signup").className = "tab-btn" + (!si ? " active" : "");
-        document.getElementById("form-title").textContent = si ? "Welcome back" : "Create account";
-        document.getElementById("submit-label").textContent = si ? "Sign In" : "Create Account";
-        document.getElementById("footer-hint").textContent = si ? "Don't have an account?" : "Already have an account?";
-        document.getElementById("footer-link").textContent = si ? "Sign Up" : "Sign In";
+        const isSignIn = tab === "signin";
+
+        document.getElementById("tab-signin").className = "seg-btn" + (isSignIn ? " active" : "");
+        document.getElementById("tab-signup").className = "seg-btn" + (!isSignIn ? " active" : "");
+        document.getElementById("head-title").textContent = isSignIn ? "Welcome back" : "Create account";
+        document.getElementById("head-sub").textContent = isSignIn
+            ? "Sign in to access the asset protection database"
+            : "Register a new operator for the protection database";
+        document.getElementById("submit-label").textContent = isSignIn ? "Sign In" : "Create Account";
+        document.getElementById("footer-hint").textContent = isSignIn ? "Don't have an account?" : "Already have an account?";
+        document.getElementById("footer-link").textContent = isSignIn ? "Sign Up" : "Sign In";
+
+        document.getElementById("role-section").style.display = isSignIn ? "" : "none";
         hideStatus();
     }
 
-    function togglePwd() {
-        const i = document.getElementById("password");
-        const eye = document.getElementById("eye-icon");
-        if (i.type === "password") {
-            i.type = "text";
-            eye.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    function showStatus(msg, type) {
+        const banner = document.getElementById("status-display");
+        const icon = document.getElementById("status-icon");
+        const text = document.getElementById("status-text");
+
+        const map = {
+            success: { cls: "status-success", ic: "check_circle" },
+            error:   { cls: "status-error",   ic: "error" },
+            info:    { cls: "status-info",     ic: "info" },
+            warn:    { cls: "status-warn",     ic: "warning" },
+        };
+        const s = map[type] || map.info;
+        banner.className = `status-banner visible ${s.cls}`;
+        icon.textContent = s.ic;
+        text.textContent = msg;
+    }
+
+    function hideStatus() {
+        document.getElementById("status-display").className = "status-banner";
+    }
+
+    function togglePassword() {
+        const pwd = document.getElementById("password");
+        const icon = document.getElementById("eye-icon");
+        if (pwd.type === "password") {
+            pwd.type = "text";
+            icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
         } else {
-            i.type = "password";
-            eye.innerHTML = '<path d="M17.94 17.94A10 10 0 0 1 12 20c-7 0-11-8-11-8a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9 9 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+            pwd.type = "password";
+            icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
         }
     }
 
@@ -562,38 +885,41 @@
         const password = document.getElementById("password").value;
         const role     = document.getElementById("role-select").value;
         const btn      = document.getElementById("submit-btn");
-        btn.disabled   = true;
+
+        btn.disabled = true;
 
         if (currentTab === "signin") {
-            showStatus("Authenticating…", "info");
+            showStatus("Authenticating...", "info");
             try {
                 const res = await axios.post(`${API_BASE_URL}/login`, { username, password, role });
                 if (res.data.access_token) {
-                    showStatus("Access granted — redirecting…", "success");
+                    showStatus("Access granted. Redirecting...", "success");
                     localStorage.setItem("token", res.data.access_token);
                     localStorage.setItem("user_role", res.data.role || role);
                     localStorage.setItem("operator_id", username);
-                    setTimeout(() => { window.location.href = "plantselection.html"; }, 900);
+                    setTimeout(() => { window.location.href = "plantselection.html"; }, 1000);
                 }
             } catch (err) {
-                showStatus(err.response?.data?.detail || "Invalid credentials. Please try again.", "error");
+                const msg = err.response?.data?.detail || "Invalid credentials. Please try again.";
+                showStatus(msg, "error");
                 btn.disabled = false;
             }
         } else {
-            showStatus("Creating account…", "info");
+            showStatus("Creating your account...", "info");
             try {
-                const res = await axios.post(`${API_BASE_URL}/register`, { username, password, role });
+                const res = await axios.post(`${API_BASE_URL}/register`, { username, password });
                 if (res.data.status === "success" || res.status === 200) {
                     showStatus("Account created! You can now sign in.", "success");
                     setTimeout(() => switchTab("signin"), 1500);
                 }
             } catch (err) {
-                showStatus(err.response?.data?.detail || "Registration failed. Please try again.", "error");
+                const msg = err.response?.data?.detail || "Registration failed. Please try again.";
+                showStatus(msg, "error");
             } finally {
                 btn.disabled = false;
             }
         }
     }
 </script>
-</body>
-</html>
+
+</body></html>

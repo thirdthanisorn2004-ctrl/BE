@@ -777,6 +777,14 @@
                     </div>
                 </div>
 
+                <div class="field" id="admin-code-section" style="display:none;">
+                    <label class="field-label" for="admin-code">Admin Code <span style="color:var(--faint);font-weight:400;">(optional)</span></label>
+                    <div class="field-wrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#98a1ae" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 4.9-5"></path><path d="M15 7a5 5 0 0 0-1.9-3.9"></path><circle cx="12" cy="16" r="1"></circle></svg>
+                        <input class="field-input" id="admin-code" placeholder="Enter admin code if applicable" type="password" autocomplete="off">
+                    </div>
+                </div>
+
                 <div class="field" id="role-section">
                     <label class="field-label">Access role</label>
                     <div class="sel-wrap">
@@ -843,6 +851,7 @@
         document.getElementById("footer-link").textContent = isSignIn ? "Sign Up" : "Sign In";
 
         document.getElementById("role-section").style.display = isSignIn ? "" : "none";
+        document.getElementById("admin-code-section").style.display = isSignIn ? "none" : "";
         hideStatus();
     }
 
@@ -907,7 +916,10 @@
         } else {
             showStatus("Creating your account...", "info");
             try {
-                const res = await axios.post(`${API_BASE_URL}/register`, { username, password });
+                const adminCode = document.getElementById("admin-code").value;
+                const payload = { username, password };
+                if (adminCode) payload.admin_code = adminCode;
+                const res = await axios.post(`${API_BASE_URL}/register`, payload);
                 if (res.data.status === "success" || res.status === 200) {
                     showStatus("Account created! You can now sign in.", "success");
                     setTimeout(() => switchTab("signin"), 1500);

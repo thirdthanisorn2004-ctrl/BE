@@ -1,10 +1,14 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from typing import Optional
 import libsql_client
 import os
 import uvicorn
+import bcrypt
+import jwt
+from datetime import datetime, timedelta
 
 app = FastAPI(title="GSP1 API - Production Grade")
 
@@ -17,6 +21,10 @@ app.add_middleware(
 
 TURSO_URL = os.environ.get("TURSO_DATABASE_URL", "")
 TURSO_TOKEN = os.environ.get("TURSO_AUTH_TOKEN", "")
+SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "changeme")
+ADMIN_CODE = "PTT888"
+
+security = HTTPBearer()
 
 def get_db_client():
     if not TURSO_URL or not TURSO_TOKEN:
@@ -55,6 +63,67 @@ class RelayUpdateSchema(BaseModel):
 
     # ตั้งค่าให้ Reject (422) ทันทีถ้ามีฟิลด์อื่นที่ไม่ได้อยู่ในลิสต์ด้านบนโผล่มา
     model_config = {"extra": "forbid"}
+
+class RegisterSchema(BaseModel):
+    username: str
+    password: str
+    admin_code: Optional[str] = None
+
+class LoginSchema(BaseModel):
+    username: str
+    password: str
+
+def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    try:
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=["HS256"])
+        return payload
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+def require_admin(payload=Depends(verify_token)):
+    if payload.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return payload
+
+@app.post("/api/register")
+def register(user_data: RegisterSchema):
+    role = "admin" if user_data.admin_code == ADMIN_CODE else "user"
+    hashed_password = bcrypt.hashpw(user_data.password.encode(), bcrypt.gensalt()).decode()
+    try:
+        with get_db_client() as client:
+            existing = client.execute("SELECT username FROM users WHERE username = ?", [user_data.username])
+            if existing.rows:
+                raise HTTPException(status_code=400, detail="Username already exists")
+            client.execute(
+                "INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)",
+                [user_data.username, hashed_password, role]
+            )
+        return {"status": "success", "message": "Account created", "role": role}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/login")
+def login(user_data: LoginSchema):
+    try:
+        with get_db_client() as client:
+            result = client.execute("SELECT username, password_hash, role FROM users WHERE username = ?", [user_data.username])
+            if not result.rows:
+                raise HTTPException(status_code=401, detail="Invalid credentials")
+            row = dict(zip(result.columns, result.rows[0]))
+            if not bcrypt.checkpw(user_data.password.encode(), row["password_hash"].encode()):
+                raise HTTPException(status_code=401, detail="Invalid credentials")
+            db_role = row["role"]
+            token = jwt.encode(
+                {"sub": user_data.username, "role": db_role, "exp": datetime.utcnow() + timedelta(hours=8)},
+                SECRET_KEY, algorithm="HS256"
+            )
+            return {"status": "success", "access_token": token, "role": db_role}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/")
 def home():

@@ -43,6 +43,7 @@ class UserAuthSchema(BaseModel):
     role: Optional[str] = "user" 
 
 class RelayUpdateSchema(BaseModel):
+    Device_Number: Optional[str] = None
     Relay_ID: Optional[str]
     Breaker: Optional[str] = None
     CT_Ratio: Optional[str] = None

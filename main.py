@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
@@ -6,41 +6,30 @@ from typing import Optional
 import libsql_client
 import os
 import uvicorn
+import bcrypt
 import jwt
-from datetime import datetime, timedelta, timezone
-from passlib.context import CryptContext
+from datetime import datetime, timedelta
 
-# --- 1. ตั้งค่าแอปพลิเคชันหลัก ---
-app = FastAPI(title="GSP1 API - Production Grade with Auth")
+app = FastAPI(title="GSP1 API - Production Grade")
 
 app.add_middleware(
-    CORSMiddleware, 
-    allow_origins=["*"], 
-    allow_methods=["*"], 
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
     allow_headers=["*"]
 )
 
-# --- 2. 🔐 ตั้งค่าระบบรักษาความปลอดภัยและการเข้ารหัส ---
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+TURSO_URL = os.environ.get("TURSO_DATABASE_URL", "")
+TURSO_TOKEN = os.environ.get("TURSO_AUTH_TOKEN", "")
+SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "changeme")
+ADMIN_CODE = "PTT888"
+
 security = HTTPBearer()
-
-SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "PTT_GSP_SUPER_SECRET_KEY_2026")
-ALGORITHM = "HS256"
-
-# ☁️ ฐานข้อมูล Turso DB
-TURSO_URL = "https://gsp-relay-db-thirdthanisorn2004-ctrl.aws-ap-northeast-1.turso.io"
-TURSO_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODE4NTI0NzEsImlkIjoiMDE5ZWRlYWItNzMwMS03OGZmLWE2NjUtNjA5NWRlNjBmYzkyIiwicmlkIjoiNmM2MjZiODYtZTA2OS00YTkzLWFjZWQtNjZkMTUwYmQwZDU2In0.nWP5VYLr4a5ZbN220Rc5REVA3yf5dEpXYBdo1ls9JGFedcnHxJE0E84Z-nAgK2meRCvWN_DOKZS85XV6xqR9CQ"
 
 def get_db_client():
     if not TURSO_URL or not TURSO_TOKEN:
         raise HTTPException(status_code=500, detail="Database credentials missing")
     return libsql_client.create_client_sync(url=TURSO_URL, auth_token=TURSO_TOKEN)
-
-# --- 3. 👥 Pydantic Schemas ---
-class UserAuthSchema(BaseModel):
-    username: str
-    password: str
-    role: Optional[str] = "user" 
 
 class RelayUpdateSchema(BaseModel):
     Breaker: Optional[str] = None
@@ -72,78 +61,83 @@ class RelayUpdateSchema(BaseModel):
     Remark: Optional[str] = None
     model_config = {"extra": "forbid"}
 
-# --- 4. 🛂 ด่านตรวจสอบสิทธิ์ (Middleware Guards) ---
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+class RelayRenameSchema(BaseModel):
+    new_relay_id: str
+    model_config = {"extra": "forbid"}
+
+class RegisterSchema(BaseModel):
+    username: str
+    password: str
+    admin_code: Optional[str] = None
+
+class LoginSchema(BaseModel):
+    username: str
+    password: str
+
+def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
     try:
-        token = credentials.credentials
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=["HS256"])
         return payload
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="บัตรผ่านหมดอายุแล้ว กรุณาเข้าสู่ระบบใหม่")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="บัตรผ่าน (Token) ไม่ถูกต้อง")
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
-def verify_admin_role(current_user: dict = Depends(get_current_user)):
-    if current_user.get("role") != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, 
-            detail="สิทธิ์ของคุณไม่เพียงพอ เฉพาะระดับผู้ดูแลระบบ (Admin) เท่านั้นที่เข้าถึงได้"
-        )
-    return current_user
-
-# --- 5. 📌 ROUTES: Authentication ---
-@app.post("/api/register")
-def register(user_data: UserAuthSchema):
-    with get_db_client() as client:
-        res = client.execute("SELECT username FROM users WHERE username = ?", [user_data.username])
-        if len(res.rows) > 0:
-            raise HTTPException(status_code=400, detail="ชื่อผู้ใช้งานนี้ถูกใช้ไปแล้วในระบบ")
-        
-        hashed_password = pwd_context.hash(user_data.password)
-        client.execute(
-            "INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)",
-            [user_data.username, hashed_password, user_data.role]
-        )
-        return {"status": "success", "message": "ลงทะเบียนผู้ใช้งานระบบสำเร็จแล้ว!"}
+def require_admin(payload=Depends(verify_token)):
+    if payload.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return payload
+    @app.post("/api/register")
+def register(user_data: RegisterSchema):
+    role = "admin" if user_data.admin_code == ADMIN_CODE else "user"
+    hashed_password = bcrypt.hashpw(user_data.password.encode(), bcrypt.gensalt()).decode()
+    try:
+        with get_db_client() as client:
+            existing = client.execute("SELECT username FROM users WHERE username = ?", [user_data.username])
+            if existing.rows:
+                raise HTTPException(status_code=400, detail="Username already exists")
+            client.execute(
+                "INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)",
+                [user_data.username, hashed_password, role]
+            )
+        return {"status": "success", "message": "Account created", "role": role}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.post("/api/login")
-def login(user_data: UserAuthSchema):
-    with get_db_client() as client:
-        res = client.execute("SELECT password_hash, role FROM users WHERE username = ?", [user_data.username])
-        if len(res.rows) == 0:
-            raise HTTPException(status_code=401, detail="ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง")
-        
-        db_password_hash = res.rows[0][0]
-        db_role = res.rows[0][1]
-        
-        if not pwd_context.verify(user_data.password, db_password_hash):
-            raise HTTPException(status_code=401, detail="ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง")
-        
-        expire = datetime.now(timezone.utc) + timedelta(hours=8)
-        token_payload = {"username": user_data.username, "role": db_role, "exp": expire}
-        token = jwt.encode(token_payload, SECRET_KEY, algorithm=ALGORITHM)
-        
-        return {
-            "status": "success",
-            "access_token": token,
-            "token_type": "bearer",
-            "role": db_role
-        }
+def login(user_data: LoginSchema):
+    try:
+        with get_db_client() as client:
+            result = client.execute("SELECT username, password_hash, role FROM users WHERE username = ?", [user_data.username])
+            if not result.rows:
+                raise HTTPException(status_code=401, detail="Invalid credentials")
+            row = dict(zip(result.columns, result.rows[0]))
+            if not bcrypt.checkpw(user_data.password.encode(), row["password_hash"].encode()):
+                raise HTTPException(status_code=401, detail="Invalid credentials")
+            db_role = row["role"]
+            token = jwt.encode(
+                {"sub": user_data.username, "role": db_role, "exp": datetime.utcnow() + timedelta(hours=8)},
+                SECRET_KEY, algorithm="HS256"
+            )
+            return {"status": "success", "access_token": token, "role": db_role}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
-# --- 6. 📌 ROUTES: Relay Data Management ---
 @app.get("/")
 def home():
     return {"message": "GSP1 API Production Grade is running!", "status": "success"}
 
 @app.get("/api/relays")
-def get_all_relays(current_user: dict = Depends(get_current_user)):
+def get_all_relays():
     with get_db_client() as client:
         result = client.execute("SELECT * FROM relays")
         data = [dict(zip(result.columns, row)) for row in result.rows]
-        return {"status": "success", "total": len(data), "data": data, "authorized_operator": current_user["username"]}
+        return {"status": "success", "total": len(data), "data": data}
 
 @app.get("/api/relays/{plant}")
-def get_relays_by_plant(plant: str, current_user: dict = Depends(get_current_user)):
+def get_relays_by_plant(plant: str):
     with get_db_client() as client:
         result = client.execute("SELECT * FROM relays WHERE Plant = ?", [plant.upper()])
         data = [dict(zip(result.columns, row)) for row in result.rows]
@@ -152,27 +146,43 @@ def get_relays_by_plant(plant: str, current_user: dict = Depends(get_current_use
         return {"status": "success", "total": len(data), "data": data}
 
 @app.put("/api/relays/{relay_id}")
-def update_relay(relay_id: str, updated_data: RelayUpdateSchema, current_user: dict = Depends(verify_admin_role)):
+def update_relay(relay_id: str, updated_data: RelayUpdateSchema):
     update_dict = updated_data.model_dump(exclude_unset=True)
     if not update_dict:
         return {"status": "success", "message": "ไม่มีข้อมูลอัปเดต"}
-    
     fields = list(update_dict.keys())
     values = list(update_dict.values())
     set_clause = ", ".join([f"{field} = ?" for field in fields])
     query = f"UPDATE relays SET {set_clause} WHERE Relay_ID = ?"
-    
     try:
         with get_db_client() as client:
             result = client.execute(query, values + [relay_id])
             if result.rows_affected == 0:
                 raise HTTPException(status_code=404, detail=f"ไม่พบข้อมูล Relay ID: {relay_id}")
-                
-            return {
-                "status": "success", 
-                "message": f"แก้ไขข้อมูล Relay ID: {relay_id} สำเร็จโดย Admin!",
-                "updated_by": current_user["username"]
-            }
+            return {"status": "success", "message": f"แก้ไขข้อมูล Relay ID: {relay_id} สำเร็จ!"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"เกิดข้อผิดพลาด: {str(e)}")
+
+# ===== endpoint ใหม่: เปลี่ยนชื่อ relay =====
+@app.put("/api/relays/{relay_id}/rename")
+def rename_relay(relay_id: str, body: RelayRenameSchema, payload=Depends(require_admin)):
+    new_id = body.new_relay_id.strip()
+    if not new_id:
+        raise HTTPException(status_code=400, detail="new_relay_id required")
+    if new_id == relay_id:
+        return {"status": "success", "message": "ชื่อเดิม ไม่มีการเปลี่ยนแปลง"}
+    try:
+        with get_db_client() as client:
+            if client.execute("SELECT Relay_ID FROM relays WHERE Relay_ID = ?", [new_id]).rows:
+                raise HTTPException(status_code=400, detail=f"Relay_ID '{new_id}' มีอยู่แล้ว")
+            result = client.execute(
+                "UPDATE relays SET Relay_ID = ? WHERE Relay_ID = ?", [new_id, relay_id]
+            )
+            if result.rows_affected == 0:
+                raise HTTPException(status_code=404, detail=f"ไม่พบ Relay ID: {relay_id}")
+        return {"status": "success", "message": f"เปลี่ยนชื่อ {relay_id} เป็น {new_id} สำเร็จ!"}
     except HTTPException:
         raise
     except Exception as e:

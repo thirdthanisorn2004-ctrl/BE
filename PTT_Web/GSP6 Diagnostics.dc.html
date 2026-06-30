@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *{ box-sizing:border-box; }
+    html,body{ margin:0; height:100%; }
+    body{ font-family:'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+    ::selection{ background:#cfe0f5; }
+    *::-webkit-scrollbar{ width:10px; height:10px; }
+    *::-webkit-scrollbar-thumb{ background:#c7cdd6; border-radius:8px; border:3px solid transparent; background-clip:content-box; }
+  </style>
+</helmet>
+
+<div style="display:flex; flex-direction:column; height:100vh; background:#f7f9fc; color:#11202f; overflow:hidden;">
+
+  <!-- ===== TOP BAR ===== -->
+  <div style="display:flex; align-items:center; gap:40px; height:62px; flex-shrink:0; background:linear-gradient(180deg,#0b4f95,#003d7c); color:#fff; padding:0 24px;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cfe0f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L20 6 V11 C20 16 16.5 20 12 22 C7.5 20 4 16 4 11 V6 Z"/><path d="M9 12 l2 2 l4 -4.5"/></svg>
+      <span style="font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:16px; letter-spacing:-.01em; white-space:nowrap;">VoltStream SLD</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:30px; font-size:14px; font-weight:500; white-space:nowrap;">
+      <a href="Plant Selection Overview.dc.html" style="color:rgba(255,255,255,.72); text-decoration:none; cursor:pointer;">Plant Selection</a>
+      <div style="color:#fff; font-weight:600; padding:20px 0; border-bottom:2.5px solid #2bd07a;">Diagnostics</div>
+      <div style="color:rgba(255,255,255,.72); cursor:pointer;">Logs</div>
+    </div>
+    <div style="flex:1;"></div>
+    <div style="display:flex; align-items:center; gap:20px;">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>
+      <div style="width:30px; height:30px; border-radius:50%; overflow:hidden; background:linear-gradient(135deg,#3f7fd0,#0b3a6e); display:flex; align-items:center; justify-content:center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#dbe8f7"><circle cx="12" cy="9" r="4"/><path d="M4 21 a8 8 0 0 1 16 0 Z"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BODY ===== -->
+  <div style="display:flex; flex:1; min-height:0;">
+
+    <!-- COLLAPSED RAIL -->
+    <sc-if value="{{ sidebarClosed }}">
+      <div onClick="{{ toggleSidebar }}" title="Show panel" style="flex:0 0 40px; background:#fff; border-right:1px solid #e7ebf1; display:flex; align-items:flex-start; justify-content:center; padding-top:18px; cursor:pointer;" style-hover="background:#f7f9fc;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b56a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/><path d="M14 9l3 3-3 3"/></svg>
+      </div>
+    </sc-if>
+
+    <!-- SIDEBAR -->
+    <sc-if value="{{ sidebarOpen }}">
+    <aside style="flex:0 0 268px; background:#fff; border-right:1px solid #e7ebf1; display:flex; flex-direction:column; overflow-y:auto;">
+      <div style="display:flex; align-items:flex-start; gap:10px; padding:22px 22px 18px; border-bottom:1px solid #eff2f7;">
+        <div style="flex:1; min-width:0;">
+          <h1 style="font-family:'Space Grotesk', sans-serif; font-size:19px; font-weight:600; letter-spacing:-.01em; margin:0;">Equipment Details</h1>
+          <p style="font-size:12.5px; color:#98a1ae; margin:6px 0 0;">Select an item on the SLD</p>
+        </div>
+        <div onClick="{{ toggleSidebar }}" title="Collapse panel" style="width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#98a1ae; cursor:pointer; flex-shrink:0;" style-hover="background:#f1f4f9; color:#11202f;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/><path d="M16 9l-3 3 3 3"/></svg>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px; padding:20px 22px;">
+        <div style="border:1px solid #e7ebf1; border-radius:12px; padding:15px 16px; background:#fbfcfe;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:.06em; color:#98a1ae;">ID</div>
+          <div style="font-family:'JetBrains Mono', monospace; font-size:20px; font-weight:600; color:#0b56a4; margin-top:8px;">{{ sel.id }}</div>
+        </div>
+        <div style="border:1px solid #e7ebf1; border-radius:12px; padding:15px 16px;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:.06em; color:#98a1ae;">Type</div>
+          <div style="font-size:15px; font-weight:600; color:#11202f; margin-top:8px;">{{ sel.type }}</div>
+        </div>
+        <div style="border:1px solid #e7ebf1; border-radius:12px; padding:15px 16px;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:.06em; color:#98a1ae;">Voltage Level</div>
+          <div style="font-family:'JetBrains Mono', monospace; font-size:16px; font-weight:600; color:#11202f; margin-top:8px;">{{ sel.level }}</div>
+        </div>
+        <div style="border:1px solid #e7ebf1; border-radius:12px; padding:15px 16px;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:.06em; color:#98a1ae;">Status</div>
+          <div style="display:flex; align-items:center; gap:8px; margin-top:9px;">
+            <span style="width:9px; height:9px; border-radius:50%; background:#0f8a4d; display:inline-block; box-shadow:0 0 0 3px rgba(15,138,77,.16);"></span>
+            <span style="font-size:15px; font-weight:600; color:#0f8a4d;">Energized</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:1;"></div>
+
+      <div style="display:flex; flex-direction:column; gap:11px; padding:16px 22px 22px;">
+        <button style="width:100%; height:44px; border:1.5px solid #d7dee8; background:#fff; border-radius:11px; font-family:inherit; font-size:14px; font-weight:600; color:#11202f; cursor:pointer;" style-hover="border-color:#0b56a4; color:#0b56a4;">View Logs</button>
+        <button onClick="{{ exportCsv }}" style="display:flex; align-items:center; justify-content:center; gap:9px; width:100%; height:46px; border:none; background:linear-gradient(180deg,#0b56a4,#003d7c); border-radius:11px; font-family:inherit; font-size:14px; font-weight:600; color:#fff; cursor:pointer; box-shadow:0 8px 18px -8px rgba(0,61,124,.55);" style-hover="transform:translateY(-1px);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+          Export CSV
+        </button>
+      </div>
+    </aside>
+    </sc-if>
+
+    <!-- CANVAS -->
+    <div style="position:relative; flex:1; min-width:0; background:#edeff2; overflow:auto;">
+      <!-- zoom controls -->
+      <div style="position:absolute; top:16px; right:18px; z-index:5; display:flex; gap:8px;">
+        <div onClick="{{ zoomIn }}" title="Zoom in" style="width:38px; height:38px; border-radius:10px; background:#fff; border:1px solid #e0e4ea; box-shadow:0 2px 6px rgba(16,32,52,.08); display:flex; align-items:center; justify-content:center; color:#0b56a4; cursor:pointer;" style-hover="background:#f4f8fd;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        </div>
+        <div onClick="{{ zoomOut }}" title="Zoom out" style="width:38px; height:38px; border-radius:10px; background:#fff; border:1px solid #e0e4ea; box-shadow:0 2px 6px rgba(16,32,52,.08); display:flex; align-items:center; justify-content:center; color:#0b56a4; cursor:pointer;" style-hover="background:#f4f8fd;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        </div>
+        <div onClick="{{ zoomFit }}" title="Fit" style="width:38px; height:38px; border-radius:10px; background:#fff; border:1px solid #e0e4ea; box-shadow:0 2px 6px rgba(16,32,52,.08); display:flex; align-items:center; justify-content:center; color:#0b56a4; cursor:pointer;" style-hover="background:#f4f8fd;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V5a1 1 0 0 1 1-1h4M20 9V5a1 1 0 0 0-1-1h-4M4 15v4a1 1 0 0 0 1 1h4M20 15v4a1 1 0 0 1-1 1h-4"/></svg>
+        </div>
+      </div>
+
+      <div style="padding:40px 30px; display:flex; justify-content:center;">
+        <div style="{{ zoomStyle }}">{{ diagram }}</div>
+      </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div onClick="{{ closePopup }}" style="{{ popup.overlayStyle }}">
+    <div onClick="{{ stopProp }}" style="width:580px; max-width:100%; max-height:86vh; background:#fff; border-radius:16px; box-shadow:0 30px 80px -20px rgba(8,20,38,.55); display:flex; flex-direction:column; overflow:hidden;">
+      <div style="display:flex; align-items:flex-start; gap:14px; padding:20px 22px; border-bottom:1px solid #eff2f7; background:linear-gradient(180deg,#f7fafe,#fff);">
+        <div style="width:42px; height:42px; border-radius:11px; background:#e7f5ee; color:#16a34a; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg width="20" height="20" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" fill="#16a34a"></rect><path d="M8 8 L16 16 M16 8 L8 16" stroke="#fff" stroke-width="2" stroke-linecap="round"></path></svg>
+        </div>
+        <div style="flex:1; min-width:0;">
+          <sc-if value="{{ popup.nameNotEditing }}"><div style="font-family:'Space Grotesk', sans-serif; font-size:19px; font-weight:700; letter-spacing:-.01em; color:#11202f;">{{ popup.id }}</div></sc-if>
+          <sc-if value="{{ popup.nameEditing }}"><input value="{{ popup.nameVal }}" onChange="{{ popup.onNameChange }}" style="width:100%; border:1px solid #cdd5e0; border-radius:8px; padding:5px 9px; font-family:'Space Grotesk', sans-serif; font-size:18px; font-weight:700; color:#11202f; outline:none;"></sc-if>
+          <div style="font-family:'JetBrains Mono', monospace; font-size:11px; color:#98a1ae; letter-spacing:.04em; margin-top:4px;">Protection Relay · Breaker {{ popup.breaker }}</div>
+        </div>
+        <div onClick="{{ closePopup }}" style="width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; color:#98a1ae; cursor:pointer; flex-shrink:0;" style-hover="background:#f1f4f9; color:#11202f;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:22px; padding:13px 22px; border-bottom:1px solid #eff2f7; font-family:'JetBrains Mono', monospace; font-size:11px;">
+        <div><span style="color:#98a1ae;">MFR </span><span style="color:#11202f; font-weight:600;">{{ popup.manufacturer }}</span></div>
+        <div><span style="color:#98a1ae;">MODEL </span><span style="color:#11202f; font-weight:600;">{{ popup.model }}</span></div>
+        <div style="flex:1;"></div>
+        <sc-if value="{{ popup.saveOk }}"><span style="display:flex; align-items:center; gap:6px; color:#0f8a4d; font-weight:600;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 L9 17 L4 12"></path></svg>Saved</span></sc-if>
+        <sc-if value="{{ popup.canEdit }}">
+          <div onClick="{{ startEdit }}" style="display:flex; align-items:center; gap:7px; padding:7px 13px; border-radius:8px; background:#0b56a4; color:#fff; font-family:'Plus Jakarta Sans', sans-serif; font-size:12px; font-weight:600; cursor:pointer;" style-hover="background:#0a4a8f;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+            Edit Parameters
+          </div>
+        </sc-if>
+        <sc-if value="{{ popup.editMode }}">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <sc-if value="{{ popup.saveError }}"><span style="color:#dc2626; font-weight:600; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ popup.saveError }}</span></sc-if>
+            <div onClick="{{ cancelEdit }}" style="padding:7px 13px; border-radius:8px; border:1px solid #d7dee8; background:#fff; color:#586273; font-family:'Plus Jakarta Sans', sans-serif; font-size:12px; font-weight:600; cursor:pointer;" style-hover="border-color:#98a1ae;">Cancel</div>
+            <div onClick="{{ saveEdits }}" style="display:flex; align-items:center; gap:7px; padding:7px 14px; border-radius:8px; background:#0f8a4d; color:#fff; font-family:'Plus Jakarta Sans', sans-serif; font-size:12px; font-weight:600; cursor:pointer;" style-hover="background:#0c7541;">
+              <sc-if value="{{ popup.saving }}">Saving…</sc-if>
+              <sc-if value="{{ popup.notSaving }}">Save Changes</sc-if>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+      <div style="padding:6px 22px 20px; overflow-y:auto;">
+        <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:.1em; color:#0b56a4; font-weight:600; margin:14px 0 8px;">Device Number</div>
+        <div style="margin:0 0 18px; border:1px solid #e7ebf1; border-radius:12px; background:#fff; padding:15px 18px;">
+          <sc-if value="{{ popup.deviceNumber.notEditing }}"><div style="font-family:'Space Grotesk', sans-serif; font-size:22px; font-weight:700; letter-spacing:-.01em; color:#11202f; line-height:1;">{{ popup.deviceNumber.code }}</div></sc-if>
+          <sc-if value="{{ popup.deviceNumber.editing }}"><input value="{{ popup.deviceNumber.inputVal }}" onChange="{{ popup.deviceNumber.onChange }}" style="width:100%; border:1px solid #cdd5e0; border-radius:8px; padding:7px 10px; font-family:'Space Grotesk', sans-serif; font-size:18px; font-weight:700; color:#11202f; outline:none;"></sc-if>
+        </div>
+        <sc-if value="{{ popup.loading }}"><div style="padding:18px 2px; font-size:13px; color:#98a1ae;">Loading parameters from API…</div></sc-if>
+        <sc-if value="{{ popup.noData }}"><div style="margin-top:14px; padding:11px 13px; border-radius:10px; background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; font-size:12.5px;">No parameter record for this relay in the database yet.</div></sc-if>
+        <div style="display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap;">
+          <sc-for list="{{ popup.tabs }}" as="tb" hint-placeholder-count="5">
+            <div onClick="{{ tb.onClick }}" style="{{ tb.tabStyle }}">{{ tb.label }}</div>
+          </sc-for>
+        </div>
+
+        <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:.1em; color:#0b56a4; font-weight:600; margin-bottom:8px;">{{ popup.activeTitle }}</div>
+        <div style="border:1px solid #eef1f5; border-radius:10px; overflow:hidden;">
+          <sc-for list="{{ popup.activeRows }}" as="r" hint-placeholder-count="6">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; padding:9px 13px; border-top:1px solid #f3f5f8; font-size:13px;">
+              <span style="color:#586273;">{{ r.k }}</span>
+              <sc-if value="{{ r.notEditing }}"><span style="font-family:'JetBrains Mono', monospace; font-size:12.5px; font-weight:500; color:#11202f;">{{ r.val }}</span></sc-if>
+              <sc-if value="{{ r.editing }}"><input value="{{ r.inputVal }}" onChange="{{ r.onChange }}" style="{{ r.inputStyle }}"></sc-if>
+            </div>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ popup.showTcc }}">
+        <div style="margin-top:18px;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:.1em; color:#0b56a4; font-weight:600; margin-bottom:7px;">{{ popup.tccName }} · TCC Curve</div>
+          <div style="border:1px solid #eef1f5; border-radius:10px; padding:12px 10px 8px;">
+            <svg width="100%" viewBox="0 0 300 196" style="display:block; font-family:'JetBrains Mono', monospace;">
+              <rect x="46" y="14" width="242" height="162" fill="#fcfdfe" stroke="#e4e8ee"></rect>
+              <sc-for list="{{ tcc.xt }}" as="gx" hint-placeholder-count="6"><line x1="{{ gx.x }}" y1="{{ tcc.y0 }}" x2="{{ gx.x }}" y2="{{ tcc.y1 }}" stroke="#eef1f5" stroke-width="1"></line></sc-for>
+              <sc-for list="{{ tcc.yt }}" as="gy" hint-placeholder-count="4"><line x1="{{ tcc.x0 }}" y1="{{ gy.y }}" x2="{{ tcc.x1 }}" y2="{{ gy.y }}" stroke="#eef1f5" stroke-width="1"></line></sc-for>
+              <sc-for list="{{ tcc.xt }}" as="gx" hint-placeholder-count="6"><text x="{{ gx.x }}" y="{{ tcc.xLabelY }}" text-anchor="middle" font-size="7.5" fill="#98a1ae">{{ gx.label }}</text></sc-for>
+              <sc-for list="{{ tcc.yt }}" as="gy" hint-placeholder-count="4"><text x="{{ tcc.yLabelX }}" y="{{ gy.y }}" text-anchor="end" dominant-baseline="middle" font-size="7.5" fill="#98a1ae">{{ gy.label }}</text></sc-for>
+              <text x="167" y="192" text-anchor="middle" font-size="8" fill="#586273">Current (× pickup)</text>
+              <text transform="rotate(-90 12 95)" x="12" y="95" text-anchor="middle" font-size="8" fill="#586273">Time (s)</text>
+              <polyline points="{{ popup.tccPath }}" fill="none" stroke="{{ popup.tccColor }}" stroke-width="2" stroke-linejoin="round"></polyline>
+            </svg>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</div>
+
+<template id="__bundler_thumbnail" data-bg-color="#003d7c">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#003d7c"/>
+    <g stroke="#cfe0f5" stroke-width="10" fill="none">
+      <line x1="380" y1="300" x2="820" y2="300"/>
+      <line x1="600" y1="220" x2="600" y2="300"/>
+      <line x1="480" y1="300" x2="480" y2="420"/>
+      <line x1="720" y1="300" x2="720" y2="420"/>
+    </g>
+    <g fill="#2bd07a">
+      <rect x="585" y="170" width="30" height="30" rx="4"/>
+      <rect x="465" y="420" width="30" height="30" rx="4"/>
+      <rect x="705" y="420" width="30" height="30" rx="4"/>
+    </g>
+  </svg>
+</template>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { zoom: 0.5, selectedRelayId: 'GSP6-R01', popupRelayId: null, relayData: null, activeTab: 'ct', sidebarOpen: true, editMode: false, editValues: {}, saving: false, saveError: null, saveOk: false, relayNames: {}, deviceNumbers: {} };
+
+  componentDidMount() {
+    let names = {};
+    try { names = JSON.parse(localStorage.getItem('gsp6_relay_names') || '{}') || {}; } catch (e) {}
+    let devnums = {};
+    try { devnums = JSON.parse(localStorage.getItem('gsp6_device_numbers') || '{}') || {}; } catch (e) {}
+    this.setState({ relayNames: names, deviceNumbers: devnums });
+    this.loadRelays();
+  }
+
+  async loadRelays() {
+    try {
+      const headers = {};
+      let t = null;
+      try { t = localStorage.getItem('token'); } catch (e) {}
+      if (t) headers['Authorization'] = 'Bearer ' + t;
+      const r = await fetch('https://gsp-api.onrender.com/api/relays', { headers });
+      const j = await r.json();
+      const map = {};
+      for (const row of (j.data || [])) { if (row.Relay_ID) map[row.Relay_ID] = row; }
+      this.setState({ relayData: map });
+    } catch (e) {
+      this.setState({ relayData: {} });
+    }
+  }
+
+  renderVals() {
+    const z = this.state.zoom;
+
+    // ===================== GSP6 SINGLE LINE DIAGRAM =====================
+    const lines = [], buses = [], transformers = [], motors = [], boxes = [],
+          grounds = [], fuses = [], breakers = [], ties = [], labels = [];
+    const cts = [], arrows = [];
+    const L = (x1, y1, x2, y2) => lines.push({ x1, y1, x2, y2 });
+    const BUS = (x, y, w) => buses.push({ x, y, w });
+    const TR = (x, y) => transformers.push({ x, y });
+    const MO = (x, y, t, r) => motors.push({ x, y, t: t || 'M', r: r || 13 });
+    const BOX = (x, y, w, h, t, fs) => boxes.push({ x, y, w, h, t, fs: fs || 8.5, tx: x + w / 2, ty: y + h / 2 + 3 });
+    const GND = (x, y) => grounds.push({ x, y });
+    const FUSE = (x, y) => fuses.push({ x, y });
+    const BRK = (x, y, lbl) => breakers.push({ x, y, lbl: lbl || '' });
+    const TIE = (x, y, lbl) => ties.push({ x, y, rx: x - 7, ry: y - 7, lbl: lbl == null ? 'N.O' : lbl });
+    const T = (x, y, t, a, s) => labels.push({ x, y, t, a: a || 'middle', s: s || 9 });
+    const ML = (x, y, arr, a, s, lh) => arr.forEach((t, i) => labels.push({ x, y: y + i * (lh || 10.5), t, a: a || 'start', s: s || 8 }));
+    const TRLBL = (x, y, nm, z) => ML(x, y, [nm, '3000kVA', '11/0.4kV', 'Dyn 11', z || '%Z=8.5'], 'start', 8, 10);
+
+    const BUSY = 445;
+
+    // ---- corner title + main buses ----
+    BOX(20, 18, 90, 22, 'GSP6 S/S', 11);
+    BUS(55, BUSY, 450);            // 3628SW01A
+    BUS(517, BUSY, 700);           // 3628SW01B
+    T(58, BUSY - 9, '3Ph, 3W, 11kV, 50Hz,3200A, 40kA, 1Sec', 'start', 8);
+    T(1214, BUSY - 9, '3Ph, 3W, 11kV, 50Hz,3200A, 40kA, 1Sec', 'end', 8);
+    T(345, BUSY + 20, '3628SW01A', 'middle', 12);
+    T(760, BUSY + 20, '3628SW01B', 'middle', 12);
+    TIE(511, BUSY, 'N.O');
+
+    // ===== TOP FEEDER 1 (3629SW224 -> 3628TR01A) =====
+    const topFeeder = (x, sw, trLines) => {
+      T(x, 32, sw, 'middle', 10);
+      L(x, 42, x, 150);
+      BOX(x - 60, 158, 30, 16, '400A', 8);
+      L(x - 30, 166, x, 166);
+      TR(x, 162);
+      L(x - 22, 162, x - 40, 162); L(x - 40, 162, x - 40, 196); GND(x - 40, 196);
+      ML(x + 18, 138, trLines, 'start', 8.5, 10.5);
+      L(x, 180, x, BUSY);
+    };
+    topFeeder(315, '3629SW224', ['3628TR01A', '50/55MVA', '33/11.5kV', 'Dyn11, ONAF', '%Z=11']);
+    ML(333, 70, ['18/30 (36)kV, AWA', '4-1Cx400mm/Phase'], 'start', 8.5, 11);
+    BRK(315, 402, 'N.C');
+
+    topFeeder(780, '3629SW228', ['3628TR01B', '50/55MVA', '33/11.5kV', 'Dyn11, ONAF', '%Z=11']);
+    ML(798, 70, ['18/30 (36)kV, AWA', '4-1Cx400mm/Phase'], 'start', 8.5, 11);
+    BRK(780, 402, 'N.C');
+
+    // ===== TOP FEEDER 3 (3629SW219 -> 3625TR01 + GT) =====
+    const F3 = 965, GTx = 1175;
+    topFeeder(F3, '3629SW219', ['3625TR01', '31.5MVA', '33/11kV', 'YNd1, ONAN', '%Z=11']);
+    ML(983, 70, ['18/30 (36)kV, AWA', '2-1Cx400mm/Phase'], 'start', 8.5, 11);
+    BRK(F3, 400, 'N.C');
+    labels.push({ x: F3 + 18, y: 360, t: '8.7/15 (17.5)kV, AWA 6-1Cx400mm/Phase', a: 'middle', s: 8, rot: -90 });
+    // GT branch: cable loop from main vertical (top horizontal) → GT, then earthing down to ground
+    L(F3, 250, GTx, 250);                 // top horizontal cable run
+    L(GTx, 250, GTx, 287);                // down into GT
+    MO(GTx, 305, 'GT', 18);
+    ML(GTx + 24, 297, ['11kV, 50Hz', '25MW'], 'start', 9, 12);
+    L(GTx, 323, GTx, 470);                // GT earthing string down
+    BRK(GTx, 365, 'N.O');
+    ML(GTx + 14, 398, ['8.7/15kV AWA', '1-1Cx185mm'], 'start', 8, 10);
+    FUSE(GTx, 420);
+    T(GTx + 17, 434, '400A', 'start', 8);
+    GND(GTx, 470);
+
+    // ===== 11kV LOADS off main bus =====
+    // Lean Solution Pump (SF start)
+    L(445, BUSY, 445, 660); BRK(445, 495, '');
+    BOX(427, 522, 36, 22, 'SF', 9);
+    ML(467, 528, ['STARTING', 'ONLY'], 'start', 8, 10);
+    BRK(445, 610, '');
+    MO(445, 666, 'M', 14);
+    ML(445, 690, ['3601/2PM002,R', 'LEAN SOLUTION PUMP', '(4MW)'], 'middle', 8.5, 11);
+    // Refrigerant Comp (SF start)
+    L(605, BUSY, 605, 660); BRK(605, 495, '');
+    BOX(587, 522, 36, 22, 'SF', 9);
+    ML(627, 528, ['STARTING', 'ONLY'], 'start', 8, 10);
+    BRK(605, 610, '');
+    MO(605, 666, 'M', 14);
+    ML(605, 690, ['3607CM01', 'REFRIGERANT COMP', '(19MW)'], 'middle', 8.5, 11);
+    // Regeneration Comp (VSD + 11/6.9kV)
+    BRK(885, 495, ''); BRK(945, 495, '');
+    L(885, BUSY, 885, 700); L(945, BUSY, 945, 590);
+    BOX(862, 522, 46, 20, 'VSD', 9);
+    TR(945, 575); ML(963, 568, ['11/6.9kV', '1750KVA'], 'start', 8, 11);
+    L(945, 588, 945, 640); BRK(945, 652, ''); L(945, 664, 945, 700); L(885, 700, 945, 700);
+    BRK(885, 640, '');
+    MO(885, 712, 'M', 14);
+    ML(885, 736, ['3602C001M01', 'REGENERATION COMP.', '(850kW)'], 'middle', 8.5, 11);
+    // Hot Oil Cir Pump (SF + 6.6/11.5kV Siemens)
+    BRK(1015, 495, ''); BRK(1055, 495, '');
+    L(1015, BUSY, 1015, 715); L(1055, BUSY, 1055, 560);
+    BOX(1037, 522, 36, 20, 'SF', 9); ML(1078, 525, ['STARTING', 'ONLY'], 'start', 7.5, 9);
+    TR(1055, 580); ML(1073, 566, ['6.6/11.5kV', '2000kVA', '(BY SIEMENS)'], 'start', 8, 10);
+    L(1055, 596, 1055, 640); BRK(1055, 652, ''); L(1055, 664, 1055, 715); L(1015, 715, 1055, 715);
+    BRK(1015, 640, '');
+    MO(1015, 727, 'M', 14);
+    ML(1015, 751, ['3608PM002A~D', 'HOT OIL CIR. PUMP', '(1800kW)'], 'middle', 8.5, 11);
+    // Dilution Fan (VSD)
+    BRK(1160, 495, '');
+    L(1160, BUSY, 1160, 700);
+    BOX(1138, 522, 46, 20, 'VSD', 9);
+    MO(1160, 712, 'M', 14);
+    ML(1160, 736, ['3634-F-001-CM01', 'DILUTION FAN', '(550kW, 11kV)'], 'middle', 8.5, 11);
+
+    // ===== 400V CASCADE (nested pyramid, cascaded bus-to-bus) =====
+    const cY = [805, 950, 1085, 1212, 1335];
+    const cId = ['06', '05', '04', '03', '02'];
+    const cLeft  = [210, 175, 135, 92, 50];     // left bus left edge per level (widens down)
+    const cRight = [660, 695, 735, 778, 820];   // right bus right edge per level
+    const cCL = 470, cCR = 560;                  // inner ends around the tie
+    cY.forEach((y, i) => {
+      BUS(cLeft[i], y, cCL - cLeft[i]);
+      BUS(cCR, y, cRight[i] - cCR);
+      L(cCL, y, 504, y); TIE(511, y, 'N.O'); L(518, y, cCR, y);
+      T(cLeft[i], y + 16, '400-230V, 5000A, 85kA  3628SW' + cId[i] + 'A', 'start', 8);
+      T(cRight[i], y + 16, '3628SW' + cId[i] + 'B', 'end', 8);
+    });
+    // one cascade column (sign = -1 left, +1 right)
+    const cascadeSide = (sign, edges, names) => {
+      for (let i = 0; i < 5; i++) {
+        const topY = (i === 0) ? BUSY : cY[i - 1];
+        const botY = cY[i];
+        const x = (i === 0) ? edges[0] : edges[i - 1];   // sits at outer end of bus above
+        const ty = (topY + botY) / 2 + (i === 0 ? 60 : 0);
+        L(x, topY, x, ty - 12);
+        TR(x, ty);
+        L(x, ty + 12, x, botY);
+        BRK(x, (ty + botY) / 2 + 4, 'N.C');
+        // earthing stub on the outer side
+        const gx = x + sign * 24;
+        L(x, ty, gx, ty); GND(gx, ty + 2);
+        // transformer label on the inner side
+        const lx = x - sign * 16;
+        ['3000kVA', '11/0.4kV', 'Dyn 11', '%Z=8.5'].forEach((tline, j) =>
+          labels.push({ x: lx, y: ty - 24 + j * 10, t: tline, a: sign < 0 ? 'start' : 'end', s: 8, rotT: '' }));
+        labels.push({ x: lx, y: ty - 34, t: names[i], a: sign < 0 ? 'start' : 'end', s: 8, rotT: '' });
+        // 1250A sub-bus label at the TR05 level
+        if (i === 1) {
+          labels.push({ x: lx, y: ty - 56, t: '400-230V, 1250A, 85kA', a: sign < 0 ? 'start' : 'end', s: 7.5, rotT: '' });
+          labels.push({ x: lx, y: ty - 46, t: '3628SW06C' + (sign < 0 ? 'A' : 'B'), a: sign < 0 ? 'start' : 'end', s: 7.5, rotT: '' });
+        }
+      }
+    };
+    cascadeSide(-1, cLeft, ['3628TR06A', '3628TR05A', '3628TR04A', '3628TR03A', '3628TR02A']);
+    cascadeSide(1, cRight, ['3628TR06B', '3628TR05B', '3628TR03B', '3628TR03B', '3628TR02B']);
+
+    // ===== DG / LOAD BANK (bottom right) =====
+    MO(910, 1075, 'DG', 18);
+    ML(936, 1066, ['0.4kV', '1800kW', 'PF=0.8'], 'start', 8.5, 11);
+    L(910, 1093, 910, 1335);                       // main vertical down to bottom bus
+    BUS(735, 1335, 180);                           // extend bottom 0.4kV bus under DG
+    BRK(910, 1165, 'N.C');                          // N.C on DG vertical
+    L(910, 1215, 1110, 1215);                       // branch right to load bank drop
+    L(1110, 1215, 1110, 1268);                      // drop to load bank
+    BRK(1110, 1240, 'N.O');                          // N.O on load bank drop
+    BOX(1065, 1270, 90, 28, 'LOAD BANK', 9.5);
+    T(1110, 1318, '(900 kW)', 'middle', 9);
+    BRK(910, 1300, 'N.O');                           // N.O where DG vertical meets bottom bus
+
+    labels.forEach((l) => { l.rotT = l.rot ? ('rotate(' + l.rot + ' ' + l.x + ' ' + l.y + ')') : ''; });
+
+    // Make every breaker a clickable relay; selecting one drives the sidebar.
+    const selId = this.state.selectedRelayId;
+    const levelOf = (y) => y < 470 ? '33 / 11kV' : (y <= 612 ? '11kV' : '0.4kV');
+    const BRKPTS = [[1021,318],[1224,330],[330,420],[810,420],[922,504],[982,504],[1054,505],[1101,505],[1202,505],[326,506],[371,506],[418,506],[465,506],[584,506],[631,506],[680,506],[166,507],[232,507],[280,507],[722,507],[768,507],[818,507],[870,507],[465,610],[631,610],[1102,657],[922,667],[982,667],[406,873],[630,873],[326,991],[723,991],[280,1101],[769,1102],[958,1213],[232,1230],[819,1230],[1058,1276],[958,1356],[166,1364],[871,1364]];
+    const breakerItems = BRKPTS.map((p, i) => {
+      const bx = p[0], by = p[1];
+      const id = 'GSP6-R' + String(i + 1).padStart(2, '0');
+      return {
+        x: bx, y: by, id, level: levelOf(by), selected: id === selId,
+        onClick: () => this.setState({ selectedRelayId: id, popupRelayId: id, editMode: false, editValues: {}, saveError: null, saveOk: false, activeTab: 'ct' }),
+      };
+    });
+    const names = this.state.relayNames || {};
+    const dn = (id) => (id && names[id]) ? names[id] : id;
+    const selB = breakerItems.find((b) => b.id === selId) || null;
+    const sel = {
+      id: selB ? dn(selB.id) : '—',
+      type: selB ? 'Protection Relay' : '—',
+      level: selB ? selB.level : '—',
+      hasSel: !!selB,
+    };
+
+    // Parameter popup for the clicked relay (values from the live API row).
+    const popupId = this.state.popupRelayId;
+    const dbId = dn(popupId);
+    const row = (this.state.relayData && this.state.relayData[dbId]) || null;
+    const v = (k) => (row && row[k] != null && String(row[k]).trim() !== '') ? String(row[k]) : '—';
+    const raw = (k) => (row && row[k] != null) ? String(row[k]) : '';
+    const popupSections = [
+      { title: 'Device', rows: [
+        { k:'Breaker', f:'Breaker' }, { k:'Manufacturer', f:'Relay_Manufacturer' }, { k:'Model', f:'Relay_Model' },
+        { k:'Remark', f:'Remark' },
+      ] },
+      { title: 'Instrument Transformers', rows: [
+        { k:'CT Ratio', f:'CT_Ratio' }, { k:'CT Class', f:'CT_Class' }, { k:'CT Burden (VA)', f:'CT_Burden_VA' },
+        { k:'ZCT Ratio', f:'ZCT_Ratio' }, { k:'ZCT Class', f:'ZCT_Class' }, { k:'ZCT Burden (VA)', f:'ZCT_Burden_VA' },
+      ] },
+      { title: 'Phase Overcurrent · 50/51', rows: [
+        { k:'Curve', f:'Phase_Curve' }, { k:'Pickup', f:'Phase_Pickup' }, { k:'Primary Amps', f:'Phase_Prim_Amps' },
+        { k:'Time Dial', f:'Phase_Time_Dial' }, { k:'Inst. Pickup', f:'Phase_Inst_Pickup' },
+        { k:'Inst. Prim Amps', f:'Phase_Inst_Prim_Amps' }, { k:'Inst. Delay (s)', f:'Phase_Inst_Delay_s' },
+      ] },
+      { title: 'Ground Overcurrent · 50N/51N', rows: [
+        { k:'Curve', f:'Ground_Curve' }, { k:'Pickup', f:'Ground_Pickup' }, { k:'Primary Amps', f:'Ground_Prim_Amps' },
+        { k:'Time Dial', f:'Ground_Time_Dial' }, { k:'Inst. Pickup', f:'Ground_Inst_Pickup' },
+        { k:'Inst. Prim Amps', f:'Ground_Inst_Prim_Amps' }, { k:'Inst. Delay (s)', f:'Ground_Inst_Delay_s' },
+      ] },
+      { title: 'Overload · 49', rows: [
+        { k:'OLR Trip', f:'OLR_Trip' }, { k:'OLR Prim Amps', f:'OLR_Prim_Amps' }, { k:'OLR Time Const', f:'OLR_Time_Constant' },
+      ] },
+    ];
+    // Representative IEC Standard-Inverse TCC curves (log–log) for phase & ground.
+    const X0 = 46, Y0 = 14, X1 = 288, Y1 = 176, PW = X1 - X0, PH = Y1 - Y0;
+    const LX = Math.log10(20);
+    const PX = (M) => X0 + (Math.log10(M) / LX) * PW;
+    const PY = (t) => Y0 + ((1 - Math.log10(t)) / 3) * PH;
+    const clT = (t) => Math.max(0.02, Math.min(10, t));
+    const curve = (TD, instM) => {
+      const pts = [];
+      for (let i = 0; i <= 44; i++) {
+        const M = 1.05 * Math.pow(20 / 1.05, i / 44);
+        if (M >= instM) break;
+        const t = TD * 0.14 / (Math.pow(M, 0.02) - 1);
+        if (t > 10) continue;
+        pts.push(PX(M).toFixed(1) + ',' + PY(clT(t)).toFixed(1));
+      }
+      const tAt = clT(TD * 0.14 / (Math.pow(instM, 0.02) - 1));
+      pts.push(PX(instM).toFixed(1) + ',' + PY(tAt).toFixed(1));
+      pts.push(PX(instM).toFixed(1) + ',' + PY(0.03).toFixed(1));
+      pts.push(PX(20).toFixed(1) + ',' + PY(0.03).toFixed(1));
+      return pts.join(' ');
+    };
+    const tcc = {
+      x0: X0, y0: Y0, x1: X1, y1: Y1, xLabelY: Y1 + 12, yLabelX: X0 - 7,
+      xt: [1, 2, 3, 5, 10, 20].map((M) => ({ x: +PX(M).toFixed(1), label: String(M) })),
+      yt: [0.01, 0.1, 1, 10].map((t) => ({ y: +PY(t).toFixed(1), label: String(t) })),
+      phasePath: curve(0.2, 12),
+      groundPath: curve(0.1, 9),
+    };
+
+    // Tabbed sections — each heading is selectable; Phase/Ground show their own TCC curve.
+    const tabsDef = [
+      { id:'ct', label:'CT / ZCT', sec: popupSections[1] },
+      { id:'phase', label:'Phase', sec: popupSections[2] },
+      { id:'ground', label:'Ground', sec: popupSections[3] },
+      { id:'olr', label:'Overload', sec: popupSections[4] },
+    ];
+    const activeTab = this.state.activeTab || 'ct';
+    const tabItems = tabsDef.map((t) => ({
+      id: t.id, label: t.label, active: t.id === activeTab,
+      onClick: () => this.setState({ activeTab: t.id }),
+      tabStyle: {
+        padding: '8px 12px', borderRadius: 9, cursor: 'pointer', whiteSpace: 'nowrap',
+        fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 600, letterSpacing: '.02em',
+        background: t.id === activeTab ? '#0b56a4' : '#f1f4f9',
+        color: t.id === activeTab ? '#fff' : '#586273',
+      },
+    }));
+    const activeSec = (tabsDef.find((t) => t.id === activeTab) || tabsDef[0]).sec;
+    const showTcc = activeTab === 'phase' || activeTab === 'ground';
+
+    // Admin gate
+    let role = 'admin';
+    try { role = localStorage.getItem('user_role') || 'admin'; } catch (e) {}
+    const isAdmin = String(role).toLowerCase() === 'admin';
+    const editMode = this.state.editMode && isAdmin;
+    const editValues = this.state.editValues || {};
+
+    const inputStyle = {
+      width: 150, textAlign: 'right', border: '1px solid #cdd5e0', borderRadius: 7,
+      padding: '5px 8px', fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 500,
+      color: '#11202f', background: '#fff', outline: 'none',
+    };
+    const mapRow = (r) => ({
+      k: r.k, val: (v(r.f) === '—' && r.def) ? r.def : v(r.f), field: r.f,
+      editing: editMode, notEditing: !editMode,
+      inputVal: editValues[r.f] !== undefined ? editValues[r.f] : (raw(r.f) || r.def || ''),
+      inputStyle,
+      onChange: (e) => {
+        const val2 = e.target.value;
+        this.setState((s) => ({ editValues: { ...s.editValues, [r.f]: val2 }, saveOk: false }));
+      },
+    });
+    // All sections combined into one list (no tabs).
+    const allSections = popupSections.map((sec) => ({ title: sec.title, rows: sec.rows.map(mapRow) }));
+    const activeRows = activeSec.rows.map(mapRow);
+
+    const deviceBadgeDefs = [
+      { label:'Phase', f:'Phase_Device', def:'50/51', accent:'#0b56a4', bg:'#eef4fb' },
+      { label:'Ground', f:'Ground_Device', def:'50N/51N', accent:'#b45309', bg:'#fdf4e7' },
+      { label:'Overload', f:'OLR_Device', def:'49', accent:'#0f8a4d', bg:'#eaf6ef' },
+    ];
+    const deviceNumberDefault = '50/51, 50N/51N, 49';
+    const devNumMap = this.state.deviceNumbers || {};
+    const dbDevNum = (row && row.Device_Number != null && String(row.Device_Number).trim() !== '') ? String(row.Device_Number) : '';
+    const savedDevNum = dbDevNum || devNumMap[dbId] || '';
+    const deviceNumber = {
+      code: savedDevNum || deviceNumberDefault,
+      editing: editMode, notEditing: !editMode,
+      inputVal: editValues['Device_Number'] !== undefined ? editValues['Device_Number'] : (savedDevNum || deviceNumberDefault),
+      onChange: (e) => { const val2 = e.target.value; this.setState((s) => ({ editValues: { ...s.editValues, Device_Number: val2 }, saveOk: false })); },
+    };
+    const deviceBadges = deviceBadgeDefs.map((d, di) => ({
+      label: d.label, field: d.f, accent: d.accent, bg: d.bg,
+      dotStyle: { width:7, height:7, borderRadius:'50%', background:d.accent },
+      cardStyle: { flex:1, border:'1px solid #e7ebf1', borderTop:'3px solid '+d.accent, borderRadius:12, background:'#fff', padding:'13px 16px 12px' },
+      segStyle: { flex:1, padding:'2px 16px', borderLeft: di === 0 ? 'none' : '1px solid #eef1f5' },
+      codeStyle: { fontFamily:"'Space Grotesk', sans-serif", fontSize:23, fontWeight:700, letterSpacing:'-.01em', color:d.accent, lineHeight:1 },
+      code: (v(d.f) === '\u2014') ? d.def : v(d.f),
+      editing: editMode, notEditing: !editMode,
+      inputVal: editValues[d.f] !== undefined ? editValues[d.f] : (raw(d.f) || d.def || ''),
+      onChange: (e) => {
+        const val2 = e.target.value;
+        this.setState((s) => ({ editValues: { ...s.editValues, [d.f]: val2 }, saveOk: false }));
+      },
+    }));
+
+    const startEdit = () => this.setState({ editMode: true, editValues: {}, saveError: null, saveOk: false });
+    const cancelEdit = () => this.setState({ editMode: false, editValues: {}, saveError: null });
+    const saveEdits = async () => {
+      if (!popupId) return;
+      this.setState({ saving: true, saveError: null });
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        let t = null; try { t = localStorage.getItem('token'); } catch (e) {}
+        if (!t) { throw new Error('กรุณา login เป็น admin ใหม่ (token หมดอายุ)'); }
+        headers['Authorization'] = 'Bearer ' + t;
+        // 1) Resolve the new id if the name was changed.
+        const nm = this.state.editValues.__name;
+        let newDbId = dbId;
+        if (nm !== undefined && String(nm).trim() && String(nm).trim() !== dbId) {
+          newDbId = String(nm).trim();
+        }
+
+        // 2) Update parameters (and rename in the same PUT via Relay_ID).
+        // Body excludes Plant; includes Relay_ID only when renaming.
+        const baseRow = (this.state.relayData && this.state.relayData[dbId]) || {};
+        // Send ONLY the fields the admin actually changed (backend uses
+        // exclude_unset, so partial updates are fine) and coerce numeric
+        // strings to numbers so float columns don't 422 on a string value.
+        const sample = (this.state.relayData && Object.values(this.state.relayData)[0]) || {};
+        const dbCols = Object.keys(sample);
+        const NON_DB = { Plant: 1, Relay_ID: 1, Phase_Device: 1, Ground_Device: 1, OLR_Device: 1, __name: 1 };
+        // Float columns in the backend schema — only these get numeric coercion.
+        const FLOAT_COLS = {
+          Phase_Pickup:1, Phase_Prim_Amps:1, Phase_Time_Dial:1, Phase_Inst_Pickup:1, Phase_Inst_Prim_Amps:1, Phase_Inst_Delay_s:1,
+          Ground_Pickup:1, Ground_Prim_Amps:1, Ground_Time_Dial:1, Ground_Inst_Pickup:1, Ground_Inst_Prim_Amps:1, Ground_Inst_Delay_s:1,
+          OLR_Trip:1, OLR_Prim_Amps:1, OLR_Time_Constant:1,
+        };
+        const coerce = (k, val) => {
+          if (val === null || val === undefined) return null;
+          const sv = String(val).trim();
+          if (sv === '') return null;
+          if (FLOAT_COLS[k]) { const n = Number(sv); return isNaN(n) ? sv : n; }
+          return sv; // string columns stay as text
+        };
+        const payload = {};
+        for (const k of Object.keys(this.state.editValues)) {
+          if (NON_DB[k]) continue;
+          if (dbCols.length && !dbCols.includes(k)) continue;
+          payload[k] = coerce(k, this.state.editValues[k]);
+        }
+        if (newDbId !== dbId) { payload.Relay_ID = newDbId; }
+        else { payload.Relay_ID = dbId; }
+        const res = await fetch('https://gsp-api.onrender.com/api/relays/' + encodeURIComponent(dbId), {
+          method: 'PUT', headers, body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          let detail = '';
+          try { const j = await res.json(); detail = j && j.detail ? ' \u2013 ' + (typeof j.detail === 'string' ? j.detail : JSON.stringify(j.detail)) : ''; } catch (e) {}
+          if (res.status === 422 && newDbId !== dbId) {
+            throw new Error('เปลี่ยนชื่อไม่ได้: ยังไม่ได้เพิ่ม Relay_ID ใน RelayUpdateSchema (backend)');
+          }
+          throw new Error('HTTP ' + res.status + detail);
+        }
+
+        this.setState((s) => {
+          // Move the relay record under its new DB id, and remember the
+          // generated-breaker-id -> db-id mapping so future clicks resolve right.
+          const rd = { ...s.relayData };
+          const updatedRow = { ...(rd[dbId] || { Relay_ID: dbId }), ...s.editValues, Relay_ID: newDbId };
+          delete updatedRow.__name;
+          if (newDbId !== dbId) { delete rd[dbId]; }
+          rd[newDbId] = updatedRow;
+          // Persist Device Number locally (no DB column for it).
+          let deviceNumbers = s.deviceNumbers;
+          if (s.editValues.Device_Number !== undefined) {
+            deviceNumbers = { ...s.deviceNumbers, [newDbId]: s.editValues.Device_Number };
+            try { localStorage.setItem('gsp6_device_numbers', JSON.stringify(deviceNumbers)); } catch (e) {}
+          }
+          let relayNames = s.relayNames;
+          if (newDbId !== dbId) {
+            relayNames = { ...s.relayNames };
+            if (newDbId === popupId) { delete relayNames[popupId]; }
+            else { relayNames[popupId] = newDbId; }
+            try { localStorage.setItem('gsp6_relay_names', JSON.stringify(relayNames)); } catch (e) {}
+          }
+          return {
+            relayData: rd, relayNames, deviceNumbers,
+            editMode: false, editValues: {}, saving: false, saveOk: true,
+          };
+        });
+      } catch (err) {
+        this.setState({ saving: false, saveError: String(err.message || err) });
+      }
+    };
+
+    const popup = {
+      open: !!popupId,
+      tabs: tabItems,
+      activeTitle: activeSec.title,
+      activeRows,
+      deviceBadges,
+      deviceNumber,
+      isAdmin, editMode,
+      canEdit: isAdmin && !editMode && this.state.relayData != null && !!row,
+      saving: this.state.saving,
+      notSaving: !this.state.saving,
+      saveError: this.state.saveError,
+      saveOk: this.state.saveOk && !editMode,
+      showTcc,
+      tccPath: activeTab === 'ground' ? tcc.groundPath : tcc.phasePath,
+      tccColor: activeTab === 'ground' ? '#b45309' : '#0b56a4',
+      tccName: activeTab === 'ground' ? 'Ground 50N/51N' : 'Phase 50/51',
+      overlayStyle: {
+        position:'fixed', inset:0, zIndex:60, background:'rgba(8,20,38,.45)',
+        display: popupId ? 'flex' : 'none', alignItems:'center', justifyContent:'center',
+        padding:24, fontFamily:"'Plus Jakarta Sans', sans-serif",
+      },
+      id: popupId ? dn(popupId) : '',
+      nameEditing: editMode,
+      nameNotEditing: !editMode,
+      nameVal: editValues['__name'] !== undefined ? editValues['__name'] : dn(popupId),
+      onNameChange: (e) => { const val2 = e.target.value; this.setState((s) => ({ editValues: { ...s.editValues, __name: val2 }, saveOk: false })); },
+      realId: popupId || '',
+      breaker: v('Breaker'),
+      manufacturer: v('Relay_Manufacturer'),
+      model: v('Relay_Model'),
+      remark: v('Remark'),
+      loading: this.state.relayData == null,
+      noData: this.state.relayData != null && !row,
+      sections: popupSections,
+    };
+    const closePopup = () => this.setState({ popupRelayId: null, editMode: false, editValues: {}, saveError: null, saveOk: false });
+    const stopProp = (e) => { if (e && e.stopPropagation) e.stopPropagation(); };
+
+    const sidebarOpen = this.state.sidebarOpen !== false;
+    const toggleSidebar = () => this.setState({ sidebarOpen: !sidebarOpen });
+
+    const exportCsv = () => {
+      const data = this.state.relayData ? Object.values(this.state.relayData) : [];
+      if (!data.length) { return; }
+      const cols = Object.keys(data[0]);
+      const esc = (val) => val == null ? '' : (/[",\n]/.test(String(val)) ? '"' + String(val).replace(/"/g, '""') + '"' : String(val));
+      const csv = [cols.join(','), ...data.map((r) => cols.map((c) => esc(r[c])).join(','))].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'GSP6_relays.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    };
+
+    const setZoom = (v2) => this.setState({ zoom: Math.min(2, Math.max(0.35, v2)) });
+
+    // Render the authoritative GSP6 SVG drawing as an image, with transparent
+    // clickable hotspots overlaid on each green breaker (same 1320×2080 coords)
+    // so click-to-edit still works while the artwork matches the source exactly.
+    const h = React.createElement;
+    const hotspots = breakerItems.map((b) => h('g', { key: b.id, onClick: b.onClick, style: { cursor: 'pointer' } },
+      b.selected ? h('rect', { x: b.x - 14, y: b.y - 14, width: 28, height: 28, rx: 6, fill: 'rgba(11,86,164,.16)', stroke: '#0b56a4', strokeWidth: 2.5 }) : null,
+      h('rect', { x: b.x - 14, y: b.y - 14, width: 28, height: 28, fill: 'transparent' }),
+    ));
+    const diagram = h('div', { style: { position: 'relative', width: 1320, height: 2080 } },
+      h('img', { src: 'gsp6-diagram.svg', width: 1320, height: 2080, draggable: false, style: { display: 'block', width: '1320px', height: '2080px' } }),
+      h('svg', { width: 1320, height: 2080, viewBox: '0 0 1320 2080', style: { position: 'absolute', top: 0, left: 0 } }, hotspots),
+    );
+
+    return {
+      diagram,
+      breakers: breakerItems, sel,
+      popup, tcc, closePopup, stopProp, startEdit, cancelEdit, saveEdits,
+      sidebarOpen, sidebarClosed: !sidebarOpen, toggleSidebar, exportCsv,
+      zoomStyle: { transform: 'scale(' + z + ')', transformOrigin: 'top center', transition: 'transform .15s ease' },
+      zoomIn: () => setZoom(z * 1.15),
+      zoomOut: () => setZoom(z / 1.15),
+      zoomFit: () => this.setState({ zoom: 0.5 }),
+    };
+  }
+}
+</script>
+</body>
+</html>

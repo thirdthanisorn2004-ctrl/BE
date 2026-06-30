@@ -14,9 +14,9 @@ from passlib.context import CryptContext
 app = FastAPI(title="GSP1 API - Production Grade with Auth")
 
 app.add_middleware(
-    CORSMiddleware, 
-    allow_origins=["*"], 
-    allow_methods=["*"], 
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
     allow_headers=["*"]
 )
 
@@ -40,11 +40,11 @@ def get_db_client():
 class UserAuthSchema(BaseModel):
     username: str
     password: str
-    role: Optional[str] = "user" 
+    role: Optional[str] = "user"
 
 class RelayUpdateSchema(BaseModel):
     Device_Number: Optional[str] = None
-    Relay_ID: Optional[str]
+    Relay_ID: Optional[str] = None
     Breaker: Optional[str] = None
     CT_Ratio: Optional[str] = None
     CT_Class: Optional[str] = None
@@ -74,6 +74,11 @@ class RelayUpdateSchema(BaseModel):
     Remark: Optional[str] = None
     model_config = {"extra": "forbid"}
 
+# Schema สำหรับสร้าง relay ใหม่ (Plant + Relay_ID บังคับ)
+class RelayCreateSchema(RelayUpdateSchema):
+    Plant: str
+    Relay_ID: str
+
 # --- 4. 🛂 ด่านตรวจสอบสิทธิ์ (Middleware Guards) ---
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     try:
@@ -88,7 +93,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
 def verify_admin_role(current_user: dict = Depends(get_current_user)):
     if current_user.get("role") != "admin":
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, 
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="สิทธิ์ของคุณไม่เพียงพอ เฉพาะระดับผู้ดูแลระบบ (Admin) เท่านั้นที่เข้าถึงได้"
         )
     return current_user
@@ -100,7 +105,7 @@ def register(user_data: UserAuthSchema):
         res = client.execute("SELECT username FROM users WHERE username = ?", [user_data.username])
         if len(res.rows) > 0:
             raise HTTPException(status_code=400, detail="ชื่อผู้ใช้งานนี้ถูกใช้ไปแล้วในระบบ")
-        
+
         hashed_password = pwd_context.hash(user_data.password)
         client.execute(
             "INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)",
@@ -114,17 +119,17 @@ def login(user_data: UserAuthSchema):
         res = client.execute("SELECT password_hash, role FROM users WHERE username = ?", [user_data.username])
         if len(res.rows) == 0:
             raise HTTPException(status_code=401, detail="ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง")
-        
+
         db_password_hash = res.rows[0][0]
         db_role = res.rows[0][1]
-        
+
         if not pwd_context.verify(user_data.password, db_password_hash):
             raise HTTPException(status_code=401, detail="ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง")
-        
+
         expire = datetime.now(timezone.utc) + timedelta(hours=8)
         token_payload = {"username": user_data.username, "role": db_role, "exp": expire}
         token = jwt.encode(token_payload, SECRET_KEY, algorithm=ALGORITHM)
-        
+
         return {
             "status": "success",
             "access_token": token,
@@ -153,27 +158,72 @@ def get_relays_by_plant(plant: str, current_user: dict = Depends(get_current_use
             return {"status": "error", "message": f"ไม่พบข้อมูลของ {plant}"}
         return {"status": "success", "total": len(data), "data": data}
 
+# ➕ สร้าง relay ใหม่ (เช่น relay ตัวที่ 2, 3 ของ breaker เดียวกัน)
+@app.post("/api/relays")
+def create_relay(new_data: RelayCreateSchema, current_user: dict = Depends(verify_admin_role)):
+    data = new_data.model_dump(exclude_none=True)
+    data["Plant"] = data["Plant"].upper()
+    try:
+        with get_db_client() as client:
+            exists = client.execute("SELECT Relay_ID FROM relays WHERE Relay_ID = ?", [data["Relay_ID"]])
+            if len(exists.rows) > 0:
+                raise HTTPException(status_code=400, detail=f"Relay_ID {data['Relay_ID']} มีอยู่แล้วในระบบ")
+
+            cols = ", ".join(data.keys())
+            placeholders = ", ".join(["?"] * len(data))
+            client.execute(
+                f"INSERT INTO relays ({cols}) VALUES ({placeholders})",
+                list(data.values())
+            )
+            return {
+                "status": "success",
+                "message": f"สร้าง Relay ID: {data['Relay_ID']} สำเร็จโดย Admin!",
+                "created_by": current_user["username"]
+            }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"เกิดข้อผิดพลาด: {str(e)}")
+
 @app.put("/api/relays/{relay_id}")
 def update_relay(relay_id: str, updated_data: RelayUpdateSchema, current_user: dict = Depends(verify_admin_role)):
     update_dict = updated_data.model_dump(exclude_unset=True)
     if not update_dict:
         return {"status": "success", "message": "ไม่มีข้อมูลอัปเดต"}
-    
+
     fields = list(update_dict.keys())
     values = list(update_dict.values())
     set_clause = ", ".join([f"{field} = ?" for field in fields])
     query = f"UPDATE relays SET {set_clause} WHERE Relay_ID = ?"
-    
+
     try:
         with get_db_client() as client:
             result = client.execute(query, values + [relay_id])
             if result.rows_affected == 0:
                 raise HTTPException(status_code=404, detail=f"ไม่พบข้อมูล Relay ID: {relay_id}")
-                
+
             return {
-                "status": "success", 
+                "status": "success",
                 "message": f"แก้ไขข้อมูล Relay ID: {relay_id} สำเร็จโดย Admin!",
                 "updated_by": current_user["username"]
+            }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"เกิดข้อผิดพลาด: {str(e)}")
+
+# 🗑️ ลบ relay (เฉพาะ relay ที่เพิ่มเข้ามา)
+@app.delete("/api/relays/{relay_id}")
+def delete_relay(relay_id: str, current_user: dict = Depends(verify_admin_role)):
+    try:
+        with get_db_client() as client:
+            result = client.execute("DELETE FROM relays WHERE Relay_ID = ?", [relay_id])
+            if result.rows_affected == 0:
+                raise HTTPException(status_code=404, detail=f"ไม่พบ Relay ID: {relay_id}")
+            return {
+                "status": "success",
+                "message": f"ลบ Relay ID: {relay_id} สำเร็จโดย Admin!",
+                "deleted_by": current_user["username"]
             }
     except HTTPException:
         raise

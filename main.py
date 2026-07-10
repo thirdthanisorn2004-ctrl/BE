@@ -36,6 +36,28 @@ def get_db_client():
         raise HTTPException(status_code=500, detail="Database credentials missing")
     return libsql_client.create_client_sync(url=TURSO_URL, auth_token=TURSO_TOKEN)
 
+# Auto-migration: make sure all extra device-function columns exist in Turso.
+EXTRA_COLUMNS = [
+    "FP_27_PkV", "FP_27_Td", "FP_59_PkV", "FP_59_Td", "FP_37_Pk", "FP_37_Td",
+    "FP_46_Pk", "FP_46_TD", "FP_47_PkV", "FP_47_Td", "FP_32_Pk", "FP_32_Td",
+    "FP_67_Pk", "FP_67_Ang", "FP_67_Td", "FP_67N_Pk", "FP_67N_Ang", "FP_67N_Td",
+    "FP_81_Ov", "FP_81_Un", "FP_81_Td", "FP_25_dV", "FP_25_dF", "FP_25_dA",
+    "FP_50BF_Pk", "FP_50BF_Td", "FP_64_PkV", "FP_64_Td", "FP_87_Pk", "FP_87_S1",
+    "FP_87_S2", "FP_79_Shots", "FP_79_Dt", "FP_79_Rc", "FP_86_St", "FP_86_Rst",
+]
+
+@app.on_event("startup")
+def ensure_columns():
+    try:
+        with get_db_client() as client:
+            for col in EXTRA_COLUMNS:
+                try:
+                    client.execute(f"ALTER TABLE relays ADD COLUMN {col} TEXT")
+                except Exception:
+                    pass  # column already exists
+    except Exception as e:
+        print(f"[startup migration] skipped: {e}")
+
 # --- 3. 👥 Pydantic Schemas ---
 class UserAuthSchema(BaseModel):
     username: str
@@ -72,6 +94,43 @@ class RelayUpdateSchema(BaseModel):
     OLR_Prim_Amps: Optional[float] = None
     OLR_Time_Constant: Optional[float] = None
     Remark: Optional[str] = None
+    # --- Extra ANSI/IEEE C37.2 device functions (stored as text) ---
+    FP_27_PkV: Optional[str] = None
+    FP_27_Td: Optional[str] = None
+    FP_59_PkV: Optional[str] = None
+    FP_59_Td: Optional[str] = None
+    FP_37_Pk: Optional[str] = None
+    FP_37_Td: Optional[str] = None
+    FP_46_Pk: Optional[str] = None
+    FP_46_TD: Optional[str] = None
+    FP_47_PkV: Optional[str] = None
+    FP_47_Td: Optional[str] = None
+    FP_32_Pk: Optional[str] = None
+    FP_32_Td: Optional[str] = None
+    FP_67_Pk: Optional[str] = None
+    FP_67_Ang: Optional[str] = None
+    FP_67_Td: Optional[str] = None
+    FP_67N_Pk: Optional[str] = None
+    FP_67N_Ang: Optional[str] = None
+    FP_67N_Td: Optional[str] = None
+    FP_81_Ov: Optional[str] = None
+    FP_81_Un: Optional[str] = None
+    FP_81_Td: Optional[str] = None
+    FP_25_dV: Optional[str] = None
+    FP_25_dF: Optional[str] = None
+    FP_25_dA: Optional[str] = None
+    FP_50BF_Pk: Optional[str] = None
+    FP_50BF_Td: Optional[str] = None
+    FP_64_PkV: Optional[str] = None
+    FP_64_Td: Optional[str] = None
+    FP_87_Pk: Optional[str] = None
+    FP_87_S1: Optional[str] = None
+    FP_87_S2: Optional[str] = None
+    FP_79_Shots: Optional[str] = None
+    FP_79_Dt: Optional[str] = None
+    FP_79_Rc: Optional[str] = None
+    FP_86_St: Optional[str] = None
+    FP_86_Rst: Optional[str] = None
     model_config = {"extra": "forbid"}
 
 # Schema สำหรับสร้าง relay ใหม่ (Plant + Relay_ID บังคับ)

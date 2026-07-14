@@ -38,12 +38,7 @@ def get_db_client():
 
 # Auto-migration: make sure all extra device-function columns exist in Turso.
 EXTRA_COLUMNS = [
-    "FP_27_PkV", "FP_27_Td", "FP_59_PkV", "FP_59_Td", "FP_37_Pk", "FP_37_Td",
-    "FP_46_Pk", "FP_46_TD", "FP_47_PkV", "FP_47_Td", "FP_32_Pk", "FP_32_Td",
-    "FP_67_Pk", "FP_67_Ang", "FP_67_Td", "FP_67N_Pk", "FP_67N_Ang", "FP_67N_Td",
-    "FP_81_Ov", "FP_81_Un", "FP_81_Td", "FP_25_dV", "FP_25_dF", "FP_25_dA",
-    "FP_50BF_Pk", "FP_50BF_Td", "FP_64_PkV", "FP_64_Td", "FP_87_Pk", "FP_87_S1",
-    "FP_87_S2", "FP_79_Shots", "FP_79_Dt", "FP_79_Rc", "FP_86_St", "FP_86_Rst",
+    "FP_27_PkV", "FP_27_Td", "FP_59_PkV", "FP_59_Td",
 ]
 
 @app.on_event("startup")

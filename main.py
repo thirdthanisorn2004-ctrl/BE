@@ -36,23 +36,6 @@ def get_db_client():
         raise HTTPException(status_code=500, detail="Database credentials missing")
     return libsql_client.create_client_sync(url=TURSO_URL, auth_token=TURSO_TOKEN)
 
-# Auto-migration: make sure all extra device-function columns exist in Turso.
-EXTRA_COLUMNS = [
-    "FP_27_PkV", "FP_27_Td", "FP_59_PkV", "FP_59_Td",
-]
-
-@app.on_event("startup")
-def ensure_columns():
-    try:
-        with get_db_client() as client:
-            for col in EXTRA_COLUMNS:
-                try:
-                    client.execute(f"ALTER TABLE relays ADD COLUMN {col} TEXT")
-                except Exception:
-                    pass  # column already exists
-    except Exception as e:
-        print(f"[startup migration] skipped: {e}")
-
 # --- 3. 👥 Pydantic Schemas ---
 class UserAuthSchema(BaseModel):
     username: str
@@ -60,8 +43,6 @@ class UserAuthSchema(BaseModel):
     role: Optional[str] = "user"
 
 class RelayUpdateSchema(BaseModel):
-    Device_Number: Optional[str] = None
-    Relay_ID: Optional[str] = None
     Breaker: Optional[str] = None
     CT_Ratio: Optional[str] = None
     CT_Class: Optional[str] = None
@@ -89,49 +70,7 @@ class RelayUpdateSchema(BaseModel):
     OLR_Prim_Amps: Optional[float] = None
     OLR_Time_Constant: Optional[float] = None
     Remark: Optional[str] = None
-    # --- Extra ANSI/IEEE C37.2 device functions (stored as text) ---
-    FP_27_PkV: Optional[str] = None
-    FP_27_Td: Optional[str] = None
-    FP_59_PkV: Optional[str] = None
-    FP_59_Td: Optional[str] = None
-    FP_37_Pk: Optional[str] = None
-    FP_37_Td: Optional[str] = None
-    FP_46_Pk: Optional[str] = None
-    FP_46_TD: Optional[str] = None
-    FP_47_PkV: Optional[str] = None
-    FP_47_Td: Optional[str] = None
-    FP_32_Pk: Optional[str] = None
-    FP_32_Td: Optional[str] = None
-    FP_67_Pk: Optional[str] = None
-    FP_67_Ang: Optional[str] = None
-    FP_67_Td: Optional[str] = None
-    FP_67N_Pk: Optional[str] = None
-    FP_67N_Ang: Optional[str] = None
-    FP_67N_Td: Optional[str] = None
-    FP_81_Ov: Optional[str] = None
-    FP_81_Un: Optional[str] = None
-    FP_81_Td: Optional[str] = None
-    FP_25_dV: Optional[str] = None
-    FP_25_dF: Optional[str] = None
-    FP_25_dA: Optional[str] = None
-    FP_50BF_Pk: Optional[str] = None
-    FP_50BF_Td: Optional[str] = None
-    FP_64_PkV: Optional[str] = None
-    FP_64_Td: Optional[str] = None
-    FP_87_Pk: Optional[str] = None
-    FP_87_S1: Optional[str] = None
-    FP_87_S2: Optional[str] = None
-    FP_79_Shots: Optional[str] = None
-    FP_79_Dt: Optional[str] = None
-    FP_79_Rc: Optional[str] = None
-    FP_86_St: Optional[str] = None
-    FP_86_Rst: Optional[str] = None
     model_config = {"extra": "forbid"}
-
-# Schema สำหรับสร้าง relay ใหม่ (Plant + Relay_ID บังคับ)
-class RelayCreateSchema(RelayUpdateSchema):
-    Plant: str
-    Relay_ID: str
 
 # --- 4. 🛂 ด่านตรวจสอบสิทธิ์ (Middleware Guards) ---
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
@@ -203,42 +142,6 @@ def get_all_relays(current_user: dict = Depends(get_current_user)):
         data = [dict(zip(result.columns, row)) for row in result.rows]
         return {"status": "success", "total": len(data), "data": data, "authorized_operator": current_user["username"]}
 
-@app.get("/api/relays/{plant}")
-def get_relays_by_plant(plant: str, current_user: dict = Depends(get_current_user)):
-    with get_db_client() as client:
-        result = client.execute("SELECT * FROM relays WHERE Plant = ?", [plant.upper()])
-        data = [dict(zip(result.columns, row)) for row in result.rows]
-        if not data:
-            return {"status": "error", "message": f"ไม่พบข้อมูลของ {plant}"}
-        return {"status": "success", "total": len(data), "data": data}
-
-# ➕ สร้าง relay ใหม่ (เช่น relay ตัวที่ 2, 3 ของ breaker เดียวกัน)
-@app.post("/api/relays")
-def create_relay(new_data: RelayCreateSchema, current_user: dict = Depends(verify_admin_role)):
-    data = new_data.model_dump(exclude_none=True)
-    data["Plant"] = data["Plant"].upper()
-    try:
-        with get_db_client() as client:
-            exists = client.execute("SELECT Relay_ID FROM relays WHERE Relay_ID = ?", [data["Relay_ID"]])
-            if len(exists.rows) > 0:
-                raise HTTPException(status_code=400, detail=f"Relay_ID {data['Relay_ID']} มีอยู่แล้วในระบบ")
-
-            cols = ", ".join(data.keys())
-            placeholders = ", ".join(["?"] * len(data))
-            client.execute(
-                f"INSERT INTO relays ({cols}) VALUES ({placeholders})",
-                list(data.values())
-            )
-            return {
-                "status": "success",
-                "message": f"สร้าง Relay ID: {data['Relay_ID']} สำเร็จโดย Admin!",
-                "created_by": current_user["username"]
-            }
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"เกิดข้อผิดพลาด: {str(e)}")
-
 @app.put("/api/relays/{relay_id}")
 def update_relay(relay_id: str, updated_data: RelayUpdateSchema, current_user: dict = Depends(verify_admin_role)):
     update_dict = updated_data.model_dump(exclude_unset=True)
@@ -266,23 +169,35 @@ def update_relay(relay_id: str, updated_data: RelayUpdateSchema, current_user: d
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"เกิดข้อผิดพลาด: {str(e)}")
 
-# 🗑️ ลบ relay (เฉพาะ relay ที่เพิ่มเข้ามา)
-@app.delete("/api/relays/{relay_id}")
-def delete_relay(relay_id: str, current_user: dict = Depends(verify_admin_role)):
+# --- POST: สร้าง Relay ใหม่ ---
+class RelayCreateSchema(RelayUpdateSchema):
+    Plant: str
+    Relay_ID: str
+    Device_Number: Optional[str] = None
+
+@app.post("/api/relays")
+def create_relay(new_data: RelayCreateSchema, current_user: dict = Depends(verify_admin_role)):
+    data_dict = new_data.model_dump(exclude_unset=True)
+    fields = list(data_dict.keys())
+    values = list(data_dict.values())
+    placeholders = ", ".join(["?"] * len(fields))
+    col_clause = ", ".join(fields)
+    query = f"INSERT INTO relays ({col_clause}) VALUES ({placeholders})"
     try:
         with get_db_client() as client:
-            result = client.execute("DELETE FROM relays WHERE Relay_ID = ?", [relay_id])
-            if result.rows_affected == 0:
-                raise HTTPException(status_code=404, detail=f"ไม่พบ Relay ID: {relay_id}")
-            return {
-                "status": "success",
-                "message": f"ลบ Relay ID: {relay_id} สำเร็จโดย Admin!",
-                "deleted_by": current_user["username"]
-            }
-    except HTTPException:
-        raise
+            client.execute(query, values)
+            return {"status": "success", "message": f"สร้าง Relay ID: {new_data.Relay_ID} สำเร็จ"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"เกิดข้อผิดพลาด: {str(e)}")
+
+@app.get("/api/relays/{plant}")
+def get_relays_by_plant(plant: str, current_user: dict = Depends(get_current_user)):
+    with get_db_client() as client:
+        result = client.execute("SELECT * FROM relays WHERE Plant = ?", [plant.upper()])
+        data = [dict(zip(result.columns, row)) for row in result.rows]
+        if not data:
+            return {"status": "error", "message": f"ไม่พบข้อมูลของ {plant}"}
+        return {"status": "success", "total": len(data), "data": data}
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
